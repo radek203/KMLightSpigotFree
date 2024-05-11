@@ -1,0 +1,34 @@
+debug: true
+server:
+  hostname: "127.0.0.1"
+  port: 25565
+  ops: [ "radek203" ]
+checks:
+  badVersion: "&cUzywasz zlej wersji minecrafta! Zmien na: 1.8.8 lub 1.8.9"
+  blockedNames: [ "proxy", "mcstorm", "mcdrop", "null", "spam" ]
+  badNameLength: "&cNick musi miec od 3 do 16 znakow!"
+  badNameChars: "&cTwoj nick zawiera niedozwolone znaki &8>> &7"
+  badName: "&cNie mozesz dolaczyc uzywajac takiego nicku!"
+motd:
+  version: "KMLightSpigot 1.8.9"
+  description: "&eSerwer uzywa silnika KMLightSpigot!\nStworzonego przez: radek203"
+command:
+  notExists: "&cTaka komenda nie istnieje!"
+  noPermission: "&cNie masz dostepu do tej komendy!"
+network:
+  proxy:
+    enabled: false
+    ips: [ "127.0.0.1" ]
+  packets:
+    count: 250
+    time: 250
+  playerOnServer: "&cGracz o twoim nicku znajduje sie juz na serwerze!"
+  restart: "&cRestart serwera! Wejdz ponownie za chwile!"
+  defaultGamemode: 3
+  defaultDimension: 1
+  keepAliveBroadcast: 5000
+  maxPlayers: -1
+  networkThreshold: -1
+  chat:
+    status: false
+    message: "&cNie mozesz tego tutaj zrobic!"
