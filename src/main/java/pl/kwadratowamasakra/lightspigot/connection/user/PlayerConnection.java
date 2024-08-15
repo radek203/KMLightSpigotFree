@@ -1,9 +1,6 @@
 package pl.kwadratowamasakra.lightspigot.connection.user;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
@@ -15,6 +12,7 @@ import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionEncod
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketDisconnect;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketChat;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketKeepAliveOut;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketKickDisconnect;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketTitle;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
@@ -176,8 +174,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final void sendPacketAndClose(final PacketOut packet) {
         if (isConnected()) {
-            channel.writeAndFlush(packet);
-            channel.close();
+            channel.writeAndFlush(packet).addListeners(ChannelFutureListener.CLOSE);
         }
     }
 
@@ -191,6 +188,10 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
     public final void disconnect(final String reason) {
         if (reason == null) {
             closeConnection();
+            return;
+        }
+        if (connectionState == ConnectionState.PLAY) {
+            sendPacketAndClose(new PacketKickDisconnect(reason));
             return;
         }
         sendPacketAndClose(new PacketDisconnect(reason));
