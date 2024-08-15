@@ -1,8 +1,12 @@
 package pl.kwadratowamasakra.lightspigot.connection.packets.out.play;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class PacketJoinGame extends PacketOut {
 
     private int entityId;
@@ -12,20 +16,6 @@ public class PacketJoinGame extends PacketOut {
     private int maxPlayers;
     private String levelType;
     private boolean reducedDebugInfo;
-
-    public PacketJoinGame(final int entityId, final int gameMode, final int dimension, final int difficulty, final int maxPlayers, final String levelType, final boolean reducedDebugInfo) {
-        this.entityId = entityId;
-        this.gameMode = gameMode;
-        this.dimension = dimension;
-        this.difficulty = difficulty;
-        this.maxPlayers = maxPlayers;
-        this.levelType = levelType;
-        this.reducedDebugInfo = reducedDebugInfo;
-    }
-
-    public PacketJoinGame() {
-
-    }
 
     @Override
     public final void write(final PacketBuffer packetBuffer) {

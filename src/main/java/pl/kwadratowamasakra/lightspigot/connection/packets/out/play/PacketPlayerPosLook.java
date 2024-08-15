@@ -1,8 +1,12 @@
 package pl.kwadratowamasakra.lightspigot.connection.packets.out.play;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class PacketPlayerPosLook extends PacketOut {
 
     private double x;
@@ -10,18 +14,6 @@ public class PacketPlayerPosLook extends PacketOut {
     private double z;
     private float yaw;
     private float pitch;
-
-    public PacketPlayerPosLook(final double x, final double y, final double z, final float yaw, final float pitch) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-    }
-
-    public PacketPlayerPosLook() {
-
-    }
 
     @Override
     public final void write(final PacketBuffer packetBuffer) {

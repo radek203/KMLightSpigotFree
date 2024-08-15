@@ -1,27 +1,19 @@
 package pl.kwadratowamasakra.lightspigot.connection.packets.out.play;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class PacketTitle extends PacketOut {
 
-    private PacketTitle.Type type;
     private String message;
     private int fadeInTime;
     private int displayTime;
     private int fadeOutTime;
-
-    public PacketTitle(final String message, final int fadeInTime, final int displayTime, final int fadeOutTime, final PacketTitle.Type type) {
-        this.message = message;
-        this.fadeInTime = fadeInTime;
-        this.displayTime = displayTime;
-        this.fadeOutTime = fadeOutTime;
-        this.type = type;
-    }
-
-    public PacketTitle() {
-
-    }
+    private PacketTitle.Type type;
 
     @Override
     public final void write(final PacketBuffer packetBuffer) {

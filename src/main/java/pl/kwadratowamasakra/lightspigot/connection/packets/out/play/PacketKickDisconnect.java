@@ -1,19 +1,15 @@
 package pl.kwadratowamasakra.lightspigot.connection.packets.out.play;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class PacketKickDisconnect extends PacketOut {
 
     private String reason;
-
-    public PacketKickDisconnect(final String reason) {
-        this.reason = reason;
-    }
-
-    public PacketKickDisconnect() {
-
-    }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
