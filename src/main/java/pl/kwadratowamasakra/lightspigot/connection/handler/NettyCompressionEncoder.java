@@ -9,7 +9,7 @@ import java.util.zip.Deflater;
 
 /**
  * The NettyCompressionEncoder class is an encoder for packets.
- * Is is based on how Minecraft encode packets. (Based on default Minecraft's NettyCompressionEncoder)
+ * It is based on how Minecraft encode packets. (Based on default Minecraft's NettyCompressionEncoder)
  */
 public class NettyCompressionEncoder extends MessageToByteEncoder<ByteBuf> {
     private final byte[] buffer = new byte[8192];

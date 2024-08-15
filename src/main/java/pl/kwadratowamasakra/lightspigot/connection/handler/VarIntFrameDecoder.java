@@ -9,22 +9,25 @@ import java.util.List;
 
 /**
  * The VarIntFrameDecoder class is a decoder for packets.
- * Is is based on how Minecraft decode packets. (Based on default Minecraft's VarIntFrameDecoder)
+ * It is based on how Minecraft decode packets. (Based on default Minecraft's VarIntFrameDecoder)
  */
 public class VarIntFrameDecoder extends ByteToMessageDecoder {
 
     private static int readVarInt(final ByteBuf byteBuf) {
-        byte b0;
         int i = 0;
-        int j = 0;
-        do {
-            b0 = byteBuf.readByte();
-            i |= (b0 & Byte.MAX_VALUE) << j * 7;
-            j++;
-            if (j > 5)
-                throw new IllegalArgumentException("VarInt too big");
-        } while ((b0 & 0x80) == 128);
-        return i;
+        final int maxRead = Math.min(5, byteBuf.readableBytes());
+
+        for (int j = 0; j < maxRead; j++) {
+            final int k = byteBuf.readByte();
+            i |= (k & 0x7F) << j * 7;
+            if ((k & 0x80) != 128) {
+                return i;
+            }
+        }
+
+        byteBuf.readBytes(maxRead);
+
+        throw new IllegalArgumentException("VarInt too big");
     }
 
     @Override

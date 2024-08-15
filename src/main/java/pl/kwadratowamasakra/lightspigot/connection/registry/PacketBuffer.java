@@ -20,7 +20,7 @@ import java.util.UUID;
 
 /**
  * Is a wrapper for {@link ByteBuf} with additional methods for reading and writing data.
- * Is is based on how packets are read and written in Minecraft.
+ * It is based on how packets are read and written in Minecraft.
  */
 public class PacketBuffer extends ByteBuf {
 
@@ -61,16 +61,23 @@ public class PacketBuffer extends ByteBuf {
         throw new IllegalArgumentException("Cannot read VarInt");
     }
 
+    // https://steinborn.me/posts/performance/how-fast-can-you-write-a-varint/
     public final void writeVarInt(final int value) {
-        int i = value;
-        while (true) {
-            if ((i & 0xFFFFFF80) == 0) {
-                buf.writeByte(i);
-                return;
-            }
-
-            buf.writeByte(i & 0x7F | 0x80);
-            i >>>= 7;
+        if ((value & (0xFFFFFFFF << 7)) == 0) {
+            buf.writeByte(value);
+        } else if ((value & (0xFFFFFFFF << 14)) == 0) {
+            int w = (value & 0x7F | 0x80) << 8 | (value >>> 7);
+            buf.writeShort(w);
+        } else if ((value & (0xFFFFFFFF << 21)) == 0) {
+            int w = (value & 0x7F | 0x80) << 16 | ((value >>> 7) & 0x7F | 0x80) << 8 | (value >>> 14);
+            buf.writeMedium(w);
+        } else if ((value & (0xFFFFFFFF << 28)) == 0) {
+            int w = (value & 0x7F | 0x80) << 24 | (((value >>> 7) & 0x7F | 0x80) << 16) | ((value >>> 14) & 0x7F | 0x80) << 8 | (value >>> 21);
+            buf.writeInt(w);
+        } else {
+            int w = (value & 0x7F | 0x80) << 24 | ((value >>> 7) & 0x7F | 0x80) << 16 | ((value >>> 14) & 0x7F | 0x80) << 8 | ((value >>> 21) & 0x7F | 0x80);
+            buf.writeInt(w);
+            buf.writeByte(value >>> 28);
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.zip.Inflater;
 
 /**
  * The NettyCompressionDecoder class is a decoder for packets.
- * Is is based on how Minecraft decode packets. (Based on default Minecraft's NettyCompressionDecoder)
+ * It is based on how Minecraft decode packets. (Based on default Minecraft's NettyCompressionDecoder)
  */
 public class NettyCompressionDecoder extends ByteToMessageDecoder {
 
