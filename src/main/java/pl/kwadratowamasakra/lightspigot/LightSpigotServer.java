@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 /**
  * The LightSpigotServer class represents the main server class for the LightSpigot server.
@@ -140,12 +141,16 @@ public class LightSpigotServer {
             keepAliveTask.cancel();
         }
 
-        if (bossGroup != null) {
-            bossGroup.shutdownGracefully();
-        }
+        try {
+            if (bossGroup != null) {
+                bossGroup.shutdownGracefully().get();
+            }
 
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
+            if (workerGroup != null) {
+                workerGroup.shutdownGracefully().get();
+            }
+        } catch (final InterruptedException | ExecutionException ignored) {
+
         }
 
         logger.info(ConsoleColors.GREEN_BRIGHT + "Server stopped!" + ConsoleColors.RESET);

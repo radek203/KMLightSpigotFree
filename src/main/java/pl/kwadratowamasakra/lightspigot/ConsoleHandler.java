@@ -47,8 +47,10 @@ class ConsoleHandler {
         while (!server.isClosing()) {
 
             try {
-                final String readLine = reader.readLine();
-                server.getCommandManager().handleCommand(server, readLine, sender);
+                final String message = reader.readLine();
+                if (message != null) {
+                    server.getCommandManager().handleCommand(server, message, sender);
+                }
             } catch (final IOException ignored) {
 
             }

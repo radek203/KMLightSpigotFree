@@ -4,7 +4,7 @@ package pl.kwadratowamasakra.lightspigot.command;
  * The CommandSender interface provides a contract for command sender classes.
  * It provides methods to get the name of the sender, check if the sender has a specific permission, and send a message to the sender.
  * Console and player classes can implement this interface to send commands and messages.
- * In future, it can be used to send commands from other sources, such as a web interface.
+ * In the future, it can be used to send commands from other sources, such as a web interface.
  */
 public interface CommandSender {
 

@@ -50,7 +50,7 @@ public class PluginManager {
     }
 
     /**
-     * Loads the plugins for the server from the plugins directory.
+     * Loads the plugins for the server from the 'plugins' directory.
      *
      * @param server The server to load the plugins for.
      */
