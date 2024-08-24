@@ -60,7 +60,8 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      * @param ctx The context of the channel handler.
      */
     @Override
-    public final void channelInactive(final ChannelHandlerContext ctx) {
+    public final void channelInactive(final ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
         if (getName() != null) {
             final PlayerQuitEvent event = new PlayerQuitEvent(this);
             server.getEventManager().handleEvent(event);
