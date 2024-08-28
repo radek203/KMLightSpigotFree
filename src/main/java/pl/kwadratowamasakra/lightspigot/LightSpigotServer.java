@@ -21,7 +21,9 @@ import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 import pl.kwadratowamasakra.lightspigot.utils.ServerLogger;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Timer;
@@ -112,13 +114,19 @@ public class LightSpigotServer {
             channelClass = NioServerSocketChannel.class;
         }
 
-        new ServerBootstrap()
-                .group(bossGroup, workerGroup)
-                .channel(channelClass)
-                .childHandler(new ClientChannelInitializer(this, packetManager))
-                .childOption(ChannelOption.TCP_NODELAY, true)
-                .localAddress(new InetSocketAddress(config.getHostname(), config.getPort()))
-                .bind();
+        try {
+            final InetAddress address = InetAddress.getByName(config.getHostname());
+
+            new ServerBootstrap()
+                    .group(bossGroup, workerGroup)
+                    .channel(channelClass)
+                    .childHandler(new ClientChannelInitializer(this, packetManager))
+                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    .localAddress(new InetSocketAddress(address, config.getPort()))
+                    .bind();
+        } catch (final UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
