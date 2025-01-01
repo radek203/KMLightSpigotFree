@@ -10,14 +10,12 @@ import pl.kwadratowamasakra.lightspigot.connection.PacketLimiter;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionDecoder;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionEncoder;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketDisconnect;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketChat;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketKeepAliveOut;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketKickDisconnect;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketTitle;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.*;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 import pl.kwadratowamasakra.lightspigot.event.PlayerQuitEvent;
 import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
+import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -430,6 +428,16 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
         writePacket(new PacketTitle(title == null ? "" : title, 0, 0, 0, PacketTitle.Type.TITLE));
         writePacket(new PacketTitle(subTitle == null ? "" : subTitle, 0, 0, 0, PacketTitle.Type.SUBTITLE));
         sendPacket(new PacketTitle(null, fadeIn, stay, stayOut, PacketTitle.Type.TIMES));
+    }
+
+    /**
+     * Shows item in the player's inventory.
+     *
+     * @param slot The slot to show the item in. (36-44 hotbar)
+     * @param item The item to show.
+     */
+    public final void setItem(final int slot, final ItemStack item) {
+        sendPacket(new PacketPlaySetSlot(0, slot, item));
     }
 
     /**

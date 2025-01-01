@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
+import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +45,18 @@ public class PacketBuffer extends ByteBuf {
         return buf;
     }
 
+    public void writeItemStack(final ItemStack itemstack) {
+        if (itemstack == null || !itemstack.isItem()) {
+            writeShort(-1);
+        } else {
+            writeShort(itemstack.getItemId());
+            writeByte(itemstack.getCount());
+            writeShort(itemstack.getData());
+
+            writeByte(0); // NBT
+        }
+    }
+
     public final int readVarInt() {
         int i = 0;
         final int maxRead = Math.min(5, buf.readableBytes());
@@ -66,16 +79,16 @@ public class PacketBuffer extends ByteBuf {
         if ((value & (0xFFFFFFFF << 7)) == 0) {
             buf.writeByte(value);
         } else if ((value & (0xFFFFFFFF << 14)) == 0) {
-            int w = (value & 0x7F | 0x80) << 8 | (value >>> 7);
+            final int w = (value & 0x7F | 0x80) << 8 | (value >>> 7);
             buf.writeShort(w);
         } else if ((value & (0xFFFFFFFF << 21)) == 0) {
-            int w = (value & 0x7F | 0x80) << 16 | ((value >>> 7) & 0x7F | 0x80) << 8 | (value >>> 14);
+            final int w = (value & 0x7F | 0x80) << 16 | ((value >>> 7) & 0x7F | 0x80) << 8 | (value >>> 14);
             buf.writeMedium(w);
         } else if ((value & (0xFFFFFFFF << 28)) == 0) {
-            int w = (value & 0x7F | 0x80) << 24 | (((value >>> 7) & 0x7F | 0x80) << 16) | ((value >>> 14) & 0x7F | 0x80) << 8 | (value >>> 21);
+            final int w = (value & 0x7F | 0x80) << 24 | (((value >>> 7) & 0x7F | 0x80) << 16) | ((value >>> 14) & 0x7F | 0x80) << 8 | (value >>> 21);
             buf.writeInt(w);
         } else {
-            int w = (value & 0x7F | 0x80) << 24 | ((value >>> 7) & 0x7F | 0x80) << 16 | ((value >>> 14) & 0x7F | 0x80) << 8 | ((value >>> 21) & 0x7F | 0x80);
+            final int w = (value & 0x7F | 0x80) << 24 | ((value >>> 7) & 0x7F | 0x80) << 16 | ((value >>> 14) & 0x7F | 0x80) << 8 | ((value >>> 21) & 0x7F | 0x80);
             buf.writeInt(w);
             buf.writeByte(value >>> 28);
         }

@@ -12,7 +12,7 @@ public class PacketKickDisconnect extends PacketOut {
     private String reason;
 
     @Override
-    public void write(PacketBuffer packetBuffer) {
+    public void write(final PacketBuffer packetBuffer) {
         packetBuffer.writeString(String.format("{\"text\": \"%s\"}", reason));
     }
 
