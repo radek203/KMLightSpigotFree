@@ -4,17 +4,17 @@ server:
   port: 25565
   ops: [ "radek203" ]
 checks:
-  badVersion: "&cUzywasz zlej wersji minecrafta! Zmien na: 1.8.8 lub 1.8.9"
+  badVersion: "&cYou are using the wrong version of Minecraft! Switch to: 1.8.8 or 1.8.9"
   blockedNames: [ "proxy", "mcstorm", "mcdrop", "null", "spam" ]
-  badNameLength: "&cNick musi miec od 3 do 16 znakow!"
-  badNameChars: "&cTwoj nick zawiera niedozwolone znaki &8>> &7"
-  badName: "&cNie mozesz dolaczyc uzywajac takiego nicku!"
+  badNameLength: "&cNickname must be between 3 and 16 characters!"
+  badNameChars: "&cYour nickname contains forbidden characters &8>> &7"
+  badName: "&cYou cannot join using such a nickname!"
 motd:
   version: "KMLightSpigot 1.8.9"
-  description: "&eSerwer uzywa silnika KMLightSpigot!\nStworzonego przez: radek203"
+  description: "&eThe server is running the KMLightSpigot engine!\nCreated by: radek203"
 command:
-  notExists: "&cTaka komenda nie istnieje!"
-  noPermission: "&cNie masz dostepu do tej komendy!"
+  notExists: "&cSuch a command does not exist!"
+  noPermission: "&cYou do not have access to this command!"
 network:
   proxy:
     enabled: false
@@ -22,8 +22,8 @@ network:
   packets:
     count: 250
     time: 250
-  playerOnServer: "&cGracz o twoim nicku znajduje sie juz na serwerze!"
-  restart: "&cRestart serwera! Wejdz ponownie za chwile!"
+  playerOnServer: "&cA player with your nickname is already on the server!"
+  restart: "&cServer restart! Please join again in a moment!"
   defaultGamemode: 3
   defaultDimension: 1
   keepAliveBroadcast: 5000
@@ -31,4 +31,4 @@ network:
   networkThreshold: -1
   chat:
     status: false
-    message: "&cNie mozesz tego tutaj zrobic!"
+    message: "&cYou cannot do this here!"
