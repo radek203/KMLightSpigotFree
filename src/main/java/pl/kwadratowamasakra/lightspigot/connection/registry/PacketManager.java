@@ -84,6 +84,7 @@ public class PacketManager {
         registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x02, PacketChat.class);
         registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x08, PacketPlayerPosLook.class);
         registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x2F, PacketPlaySetSlot.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x34, PacketPlayMap.class);
         registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x39, PacketPlayerAbilitiesOut.class);
         registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x40, PacketKickDisconnect.class);
         registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x45, PacketTitle.class);
