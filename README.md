@@ -149,7 +149,7 @@ import pl.kwadratowamasakra.lightspigot.config.Configuration;
 
 public class Main {
 
-    public final void onEnable(final LightSpigotServer server, final Configuration conf) {
+    public final void onEnable(final LightSpigotServer server, final Configuration conf, final FileHelper fileHelper) {
         new PlayerLoginListener(server);
         new SampleCommand(server);
     }

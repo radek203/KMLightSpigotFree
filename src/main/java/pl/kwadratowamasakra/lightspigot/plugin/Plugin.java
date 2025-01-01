@@ -3,6 +3,7 @@ package pl.kwadratowamasakra.lightspigot.plugin;
 import pl.kwadratowamasakra.lightspigot.config.Config;
 import pl.kwadratowamasakra.lightspigot.config.ConfigHelper;
 import pl.kwadratowamasakra.lightspigot.config.Configuration;
+import pl.kwadratowamasakra.lightspigot.config.FileHelper;
 
 import java.lang.reflect.Method;
 
@@ -18,6 +19,7 @@ public class Plugin implements Config {
     private final Method methodDisable;
     private final Object instance;
     private final Configuration config;
+    private final FileHelper fileHelper;
 
     /**
      * Constructs a new Plugin with the specified enable and disable methods, and the instance of the plugin.
@@ -36,6 +38,7 @@ public class Plugin implements Config {
         this.instance = instance;
 
         config = new ConfigHelper(this, true).createConfig();
+        fileHelper = new FileHelper(this, true);
     }
 
     /**
@@ -64,6 +67,13 @@ public class Plugin implements Config {
      */
     public final Configuration getConfig() {
         return config;
+    }
+
+    /**
+     * @return The file helper of this plugin.
+     */
+    public final FileHelper getFileHelper() {
+        return fileHelper;
     }
 
     /**

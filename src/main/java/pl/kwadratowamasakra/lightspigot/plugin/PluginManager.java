@@ -3,6 +3,7 @@ package pl.kwadratowamasakra.lightspigot.plugin;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.command.StopCommand;
 import pl.kwadratowamasakra.lightspigot.config.Configuration;
+import pl.kwadratowamasakra.lightspigot.config.FileHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,13 +74,13 @@ public class PluginManager {
 
                     final URLClassLoader child = new URLClassLoader(new URL[]{pl.toURI().toURL()}, getClass().getClassLoader());
                     final Class<?> classToLoad = Class.forName(mainClassName, true, child);
-                    final Method methodEnable = classToLoad.getDeclaredMethod("onEnable", LightSpigotServer.class, Configuration.class);
+                    final Method methodEnable = classToLoad.getDeclaredMethod("onEnable", LightSpigotServer.class, Configuration.class, FileHelper.class);
                     final Method methodDisable = hasMethod(classToLoad, "onDisable") ? classToLoad.getDeclaredMethod("onDisable") : null;
                     final Object instance = classToLoad.getConstructor().newInstance();
 
                     final Plugin plugin = new Plugin(pluginName, pl.getPath(), methodEnable, methodDisable, instance);
                     plugins.add(plugin);
-                    methodEnable.invoke(instance, server, plugin.getConfig());
+                    methodEnable.invoke(instance, server, plugin.getConfig(), plugin.getFileHelper());
                     jf.close();
 
                     server.getLogger().info(" [PLUGIN] " + pluginName + " has been loaded successfully!");
