@@ -6,7 +6,7 @@
 
     <groupId>pl.kwadratowamasakra.lightspigot</groupId>
     <artifactId>KMLightSpigot</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
