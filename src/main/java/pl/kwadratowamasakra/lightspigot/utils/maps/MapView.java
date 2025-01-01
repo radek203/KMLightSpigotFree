@@ -12,9 +12,7 @@ public interface MapView {
      * in an inventory.
      *
      * @return The ID of the map.
-     * @deprecated Magic value
      */
-    @Deprecated
     short getId();
 
     /**
@@ -74,9 +72,7 @@ public interface MapView {
          *
          * @param value The raw scale
          * @return The enum scale, or null for an invalid input
-         * @deprecated Magic value
          */
-        @Deprecated
         public static Scale valueOf(final byte value) {
             return switch (value) {
                 case 0 -> CLOSEST;

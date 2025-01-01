@@ -74,7 +74,8 @@ public final class CraftMapView implements MapView {
             renderer.render(this, canvas);
 
             final byte[] buf = canvas.getBuffer();
-            for (int i = 0; i < buf.length; ++i) {
+            final int len = buf.length;
+            for (int i = 0; i < len; ++i) {
                 final byte color = buf[i];
                 // There are 143 valid color id's, 0 -> 127 and -128 -> -113
                 if (color >= 0 || color <= -113) render.buffer[i] = color;

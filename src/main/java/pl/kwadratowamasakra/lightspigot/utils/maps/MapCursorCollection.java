@@ -70,9 +70,7 @@ public final class MapCursorCollection {
      * @param direction The facing of the cursor, from 0 to 15.
      * @param type      The type (color/style) of the map cursor.
      * @return The newly added MapCursor.
-     * @deprecated Magic value
      */
-    @Deprecated
     public MapCursor addCursor(final int x, final int y, final byte direction, final byte type) {
         return addCursor(x, y, direction, type, true);
     }
@@ -86,9 +84,7 @@ public final class MapCursorCollection {
      * @param type      The type (color/style) of the map cursor.
      * @param visible   Whether the cursor is visible.
      * @return The newly added MapCursor.
-     * @deprecated Magic value
      */
-    @Deprecated
     public MapCursor addCursor(final int x, final int y, final byte direction, final byte type, final boolean visible) {
         return addCursor(new MapCursor((byte) x, (byte) y, direction, type, visible));
     }

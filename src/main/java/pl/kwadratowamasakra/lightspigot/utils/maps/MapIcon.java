@@ -6,18 +6,11 @@ public class MapIcon {
     private final byte y;
     private final byte rotation;
 
-    public MapIcon(final byte var1, final byte var2, final byte var3, final byte var4) {
-        type = var1;
-        x = var2;
-        y = var3;
-        rotation = var4;
-    }
-
-    public MapIcon(final MapIcon var1) {
-        type = var1.type;
-        x = var1.x;
-        y = var1.y;
-        rotation = var1.rotation;
+    public MapIcon(final byte type, final byte x, final byte y, final byte rotation) {
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
     }
 
     public final byte getType() {
@@ -36,29 +29,29 @@ public class MapIcon {
         return rotation;
     }
 
-    public final boolean equals(final Object var1) {
-        if (this == var1) {
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        } else if (!(var1 instanceof final MapIcon var2)) {
+        } else if (!(obj instanceof final MapIcon icon)) {
             return false;
         } else {
-            if (type != var2.type) {
+            if (type != icon.type) {
                 return false;
-            } else if (rotation != var2.rotation) {
+            } else if (rotation != icon.rotation) {
                 return false;
-            } else if (x != var2.x) {
+            } else if (x != icon.x) {
                 return false;
             } else {
-                return y == var2.y;
+                return y == icon.y;
             }
         }
     }
 
     public final int hashCode() {
-        int var1 = type;
-        var1 = 31 * var1 + x;
-        var1 = 31 * var1 + y;
-        var1 = 31 * var1 + rotation;
-        return var1;
+        int hash = type;
+        hash = 31 * hash + x;
+        hash = 31 * hash + y;
+        hash = 31 * hash + rotation;
+        return hash;
     }
 }

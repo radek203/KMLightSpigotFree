@@ -10,77 +10,20 @@ import java.awt.image.BufferedImage;
  * colors of varying shades with values entry to entry + 3.
  */
 public final class MapPalette {
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
-    public static final byte TRANSPARENT = 0;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
-    public static final byte LIGHT_GREEN = 4;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
-    public static final byte LIGHT_BROWN = 8;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
-    public static final byte GRAY_1 = 12;
 
-    // Interface
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
+    public static final byte TRANSPARENT = 0;
+    public static final byte LIGHT_GREEN = 4;
+    public static final byte LIGHT_BROWN = 8;
+    public static final byte GRAY_1 = 12;
     public static final byte RED = 16;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte PALE_BLUE = 20;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte GRAY_2 = 24;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte DARK_GREEN = 28;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte WHITE = 32;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte LIGHT_GRAY = 36;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte BROWN = 40;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte DARK_GRAY = 44;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte BLUE = 48;
-    /**
-     * @deprecated Magic value
-     */
-    @Deprecated
     public static final byte DARK_BROWN = 52;
     static final Color[] colors = {
             c(0, 0, 0), c(0, 0, 0), c(0, 0, 0), c(0, 0, 0),
@@ -158,7 +101,6 @@ public final class MapPalette {
      *
      * @param image The image to convert.
      * @return A byte[] containing the pixels of the image.
-     * @deprecated Magic value
      */
     public static byte[] imageToBytes(final Image image) {
         final BufferedImage temp = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -170,7 +112,8 @@ public final class MapPalette {
         temp.getRGB(0, 0, temp.getWidth(), temp.getHeight(), pixels, 0, temp.getWidth());
 
         final byte[] result = new byte[temp.getWidth() * temp.getHeight()];
-        for (int i = 0; i < pixels.length; i++) {
+        final int len = pixels.length;
+        for (int i = 0; i < len; i++) {
             result[i] = matchColor(new Color(pixels[i], true));
         }
         return result;
@@ -184,9 +127,7 @@ public final class MapPalette {
      * @param b The blue component of the color.
      * @param g The green component of the color.
      * @return The index in the palette.
-     * @deprecated Magic value
      */
-    @Deprecated
     public static byte matchColor(final int r, final int g, final int b) {
         return matchColor(new Color(r, g, b));
     }
@@ -197,16 +138,15 @@ public final class MapPalette {
      *
      * @param color The Color to match.
      * @return The index in the palette.
-     * @deprecated Magic value
      */
-    @Deprecated
     public static byte matchColor(final Color color) {
         if (color.getAlpha() < 128) return 0;
 
         int index = 0;
         double best = -1;
 
-        for (int i = 4; i < colors.length; i++) {
+        final int len = colors.length;
+        for (int i = 4; i < len; i++) {
             final double distance = getDistance(color, colors[i]);
             if (distance < best || best == -1) {
                 best = distance;
@@ -223,9 +163,7 @@ public final class MapPalette {
      *
      * @param index The index in the palette.
      * @return The Color of the palette entry.
-     * @deprecated Magic value
      */
-    @Deprecated
     public static Color getColor(final byte index) {
         if ((index > -113 && index < 0) || index > 127) {
             throw new IndexOutOfBoundsException();

@@ -16,9 +16,7 @@ public final class MapCursor {
      * @param direction The facing of the cursor, from 0 to 15.
      * @param type      The type (color/style) of the map cursor.
      * @param visible   Whether the cursor is visible by default.
-     * @deprecated Magic value
      */
-    @Deprecated
     public MapCursor(final byte x, final byte y, final byte direction, final byte type, final boolean visible) {
         this.x = x;
         this.y = y;
@@ -115,9 +113,7 @@ public final class MapCursor {
      * Set the type of this cursor.
      *
      * @param type The type (color/style) of the map cursor.
-     * @deprecated Magic value
      */
-    @Deprecated
     public void setRawType(final byte type) {
         if (type < 0 || type > 15) {
             throw new IllegalArgumentException("Type must be in the range 0-15");
@@ -165,9 +161,7 @@ public final class MapCursor {
         /**
          * @param value the value
          * @return the matching type
-         * @deprecated Magic value
          */
-        @Deprecated
         public static Type byValue(final byte value) {
             for (final Type t : values()) {
                 if (t.value == value) return t;
@@ -177,9 +171,7 @@ public final class MapCursor {
 
         /**
          * @return the value
-         * @deprecated Magic value
          */
-        @Deprecated
         public byte getValue() {
             return value;
         }
