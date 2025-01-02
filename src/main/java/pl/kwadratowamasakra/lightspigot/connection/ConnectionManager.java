@@ -80,7 +80,7 @@ public class ConnectionManager {
         final String ip = connection.getIp();
         suspectedConnections.putIfAbsent(ip, 0);
         final int count = suspectedConnections.get(ip) + 1;
-        suspectedConnections.put(ip, count);
+        suspectedConnections.replace(ip, count);
         if (count == 3) {
             try {
                 new ProcessBuilder("iptables -I INPUT --src " + ip + " -j DROP").start();
@@ -96,8 +96,10 @@ public class ConnectionManager {
      * @param packet The packet to broadcast.
      */
     public final void broadcastPacket(final PacketOut packet) {
-        for (final PlayerConnection connection : connections) {
-            connection.sendPacket(packet);
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                connection.sendPacket(packet);
+            }
         }
     }
 
@@ -107,8 +109,10 @@ public class ConnectionManager {
      * @param message The message to broadcast.
      */
     public final void broadcastMessage(final String message) {
-        for (final PlayerConnection connection : connections) {
-            connection.sendMessage(message);
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                connection.sendMessage(message);
+            }
         }
     }
 
@@ -118,8 +122,10 @@ public class ConnectionManager {
      * @param message The action bar message to broadcast.
      */
     public final void broadcastActionBar(final String message) {
-        for (final PlayerConnection connection : connections) {
-            connection.sendActionBar(message);
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                connection.sendActionBar(message);
+            }
         }
     }
 
@@ -130,8 +136,10 @@ public class ConnectionManager {
      * @param subTitle The subtitle to broadcast.
      */
     public final void broadcastTitle(final String title, final String subTitle) {
-        for (final PlayerConnection connection : connections) {
-            connection.sendTitle(title, subTitle);
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                connection.sendTitle(title, subTitle);
+            }
         }
     }
 
@@ -139,8 +147,10 @@ public class ConnectionManager {
      * Broadcasts a keep-alive message to all connections.
      */
     public final void broadcastKeepAlive() {
-        for (final PlayerConnection connection : connections) {
-            connection.sendKeepAlive();
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                connection.sendKeepAlive();
+            }
         }
     }
 
@@ -151,9 +161,11 @@ public class ConnectionManager {
      * @return True if the player is online, false otherwise.
      */
     public final boolean isPlayerOnline(final String name) {
-        for (final PlayerConnection connection : connections) {
-            if (connection.getName() != null && connection.getName().equalsIgnoreCase(name)) {
-                return true;
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                if (connection.getName() != null && connection.getName().equalsIgnoreCase(name)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -174,9 +186,11 @@ public class ConnectionManager {
      */
     public final List<PlayerConnection> getConnectionsByIp(final String ip) {
         final List<PlayerConnection> ipConnections = new ArrayList<>();
-        for (final PlayerConnection connection : connections) {
-            if (connection.getIp().equals(ip)) {
-                ipConnections.add(connection);
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                if (connection.getIp().equals(ip)) {
+                    ipConnections.add(connection);
+                }
             }
         }
         return ipConnections;
@@ -189,9 +203,11 @@ public class ConnectionManager {
      * @return The connection of the player, or null if the player is not online.
      */
     public final PlayerConnection getConnectionByName(final String name) {
-        for (final PlayerConnection connection : connections) {
-            if (connection.getName() != null && connection.getName().equals(name)) {
-                return connection;
+        synchronized (connections) {
+            for (final PlayerConnection connection : connections) {
+                if (connection.getName() != null && connection.getName().equals(name)) {
+                    return connection;
+                }
             }
         }
         return null;
