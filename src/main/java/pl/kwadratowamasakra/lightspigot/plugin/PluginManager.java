@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.jar.JarFile;
 
 /**
@@ -30,6 +31,16 @@ public class PluginManager {
      * A list of plugin runnables.
      */
     private final List<PluginRunnable> runnables = new ArrayList<>();
+
+    /**
+     * An executor for the plugin runnables.
+     */
+    private final ExecutorService executor = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().factory());
+
+    /**
+     * A scheduler for the plugin runnables.
+     */
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /**
      * Checks if a class has a specific method.
@@ -108,6 +119,18 @@ public class PluginManager {
             e.printStackTrace();
         }
 
+    }
+
+    final Future<?> schedulePluginRunnable(final Runnable runnable, final long delay, final long period) {
+        return scheduler.scheduleAtFixedRate(() -> executor.execute(runnable), delay, period, TimeUnit.MILLISECONDS);
+    }
+
+    final Future<?> schedulePluginRunnable(final Runnable runnable, final long delay) {
+        return scheduler.schedule(() -> executor.execute(runnable), delay, TimeUnit.MILLISECONDS);
+    }
+
+    final Future<?> schedulePluginRunnable(final Runnable runnable) {
+        return executor.submit(runnable);
     }
 
     /**
