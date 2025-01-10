@@ -121,16 +121,19 @@ public class PluginManager {
 
     }
 
-    final Future<?> schedulePluginRunnable(final Runnable runnable, final long delay, final long period) {
-        return scheduler.scheduleAtFixedRate(() -> executor.execute(runnable), delay, period, TimeUnit.MILLISECONDS);
+    final Future<?> schedulePluginRunnable(final PluginRunnable runnable, final long delay, final long period) {
+        addPluginRunnable(runnable);
+        return scheduler.scheduleAtFixedRate(() -> executor.execute(runnable.getRunnable()), delay, period, TimeUnit.MILLISECONDS);
     }
 
-    final Future<?> schedulePluginRunnable(final Runnable runnable, final long delay) {
-        return scheduler.schedule(() -> executor.execute(runnable), delay, TimeUnit.MILLISECONDS);
+    final Future<?> schedulePluginRunnable(final PluginRunnable runnable, final long delay) {
+        addPluginRunnable(runnable);
+        return scheduler.schedule(() -> executor.execute(runnable.getRunnable()), delay, TimeUnit.MILLISECONDS);
     }
 
-    final Future<?> schedulePluginRunnable(final Runnable runnable) {
-        return executor.submit(runnable);
+    final Future<?> schedulePluginRunnable(final PluginRunnable runnable) {
+        addPluginRunnable(runnable);
+        return executor.submit(runnable.getRunnable());
     }
 
     /**
@@ -138,7 +141,7 @@ public class PluginManager {
      *
      * @param runnable The plugin runnable to add.
      */
-    final void addPluginRunnable(final PluginRunnable runnable) {
+    private void addPluginRunnable(final PluginRunnable runnable) {
         runnables.add(runnable);
     }
 
@@ -155,6 +158,7 @@ public class PluginManager {
      * Stops all the plugin runnables.
      */
     private void stopPluginRunnables() {
+        scheduler.shutdown();
         for (final PluginRunnable runnable : runnables) {
             runnable.cancelTask();
         }

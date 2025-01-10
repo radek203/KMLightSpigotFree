@@ -1,5 +1,6 @@
 package pl.kwadratowamasakra.lightspigot.plugin;
 
+import lombok.Getter;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 
 import java.util.concurrent.Future;
@@ -11,6 +12,8 @@ import java.util.concurrent.Future;
 public class PluginRunnable {
 
     private final LightSpigotServer server;
+    @Getter
+    private final Runnable runnable;
     private final Future<?> scheduledFuture;
 
     /**
@@ -24,9 +27,9 @@ public class PluginRunnable {
      */
     public PluginRunnable(final LightSpigotServer server, final Runnable runnable, final long delay, final long period) {
         this.server = server;
+        this.runnable = runnable;
 
-        scheduledFuture = server.getPluginManager().schedulePluginRunnable(runnable, delay, period);
-        server.getPluginManager().addPluginRunnable(this);
+        scheduledFuture = server.getPluginManager().schedulePluginRunnable(this, delay, period);
     }
 
     /**
@@ -39,9 +42,12 @@ public class PluginRunnable {
      */
     public PluginRunnable(final LightSpigotServer server, final Runnable runnable, final long delay) {
         this.server = server;
+        this.runnable = () -> {
+            runnable.run();
+            removeTask();
+        };
 
-        scheduledFuture = server.getPluginManager().schedulePluginRunnable(runnable, delay);
-        server.getPluginManager().addPluginRunnable(this);
+        scheduledFuture = server.getPluginManager().schedulePluginRunnable(this, delay);
     }
 
     /**
@@ -53,9 +59,12 @@ public class PluginRunnable {
      */
     public PluginRunnable(final LightSpigotServer server, final Runnable runnable) {
         this.server = server;
+        this.runnable = () -> {
+            runnable.run();
+            removeTask();
+        };
 
-        scheduledFuture = server.getPluginManager().schedulePluginRunnable(runnable);
-        server.getPluginManager().addPluginRunnable(this);
+        scheduledFuture = server.getPluginManager().schedulePluginRunnable(this);
     }
 
     /**
@@ -63,7 +72,7 @@ public class PluginRunnable {
      * This stops the task from running in the future.
      */
     public final void cancelTask() {
-        scheduledFuture.cancel(false);
+        scheduledFuture.cancel(true);
     }
 
     /**
@@ -71,7 +80,15 @@ public class PluginRunnable {
      * This stops the task from running in the future and removes it from the list of plugin runnables.
      */
     public final void cancel() {
-        scheduledFuture.cancel(false);
+        cancelTask();
+        removeTask();
+    }
+
+    /**
+     * Removes the task from the server's plugin manager.
+     * This removes the task from the list of plugin runnables.
+     */
+    private void removeTask() {
         server.getPluginManager().removePluginRunnable(this);
     }
 
