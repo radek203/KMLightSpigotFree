@@ -20,6 +20,7 @@ public class PacketCustomPayload extends PacketIn {
     @Override
     public final void handle(final PlayerConnection connection, final LightSpigotServer server) {
         connection.verifyState(ConnectionState.PLAY);
+        data.release();
     }
 
     @Override
