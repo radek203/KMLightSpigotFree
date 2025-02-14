@@ -30,6 +30,7 @@ public class ServerConfig implements Config {
     private final boolean chatOn;
     private final String chatMessageOff;
     private final boolean debugOn;
+    private final String timeZone;
     private final String commandNotExists;
     private final String commandNoPermission;
     private final String restart;
@@ -50,6 +51,7 @@ public class ServerConfig implements Config {
             throw new RuntimeException("Cannot create configuration file!");
         }
         debugOn = configuration.getBoolean("debug");
+        timeZone = configuration.getString("timeZone");
         hostname = configuration.getString("server.hostname");
         port = configuration.getInt("server.port");
         ops = configuration.getStringList("server.ops");
@@ -84,6 +86,10 @@ public class ServerConfig implements Config {
 
     public final boolean isDebugOn() {
         return debugOn;
+    }
+
+    public final String getTimeZone() {
+        return timeZone;
     }
 
     public final String getHostname() {

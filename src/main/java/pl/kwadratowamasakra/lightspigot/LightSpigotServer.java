@@ -64,7 +64,7 @@ public class LightSpigotServer {
             e.printStackTrace();
             return;
         }
-        logger = new ServerLogger(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSSS"), ZoneId.of("Europe/Warsaw"), config.isDebugOn());
+        logger = new ServerLogger(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSSS"), ZoneId.of(config.getTimeZone()), config.isDebugOn());
         logger.startLoggerThread();
 
         packetManager.registerPackets(this);
