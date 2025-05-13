@@ -8,7 +8,7 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 public class PacketAnimation extends PacketIn {
     @Override
-    public void read(final PacketBuffer packetBuffer) {
+    public void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
 
     }
 

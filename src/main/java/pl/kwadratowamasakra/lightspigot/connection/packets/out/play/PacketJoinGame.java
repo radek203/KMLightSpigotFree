@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class PacketJoinGame extends PacketOut {
     private boolean reducedDebugInfo;
 
     @Override
-    public final void write(final PacketBuffer packetBuffer) {
+    public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeInt(entityId);
         packetBuffer.writeByte(gameMode);
         packetBuffer.writeByte(dimension);

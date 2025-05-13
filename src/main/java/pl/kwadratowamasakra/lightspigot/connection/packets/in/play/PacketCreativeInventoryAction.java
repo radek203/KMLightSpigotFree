@@ -12,7 +12,7 @@ public class PacketCreativeInventoryAction extends PacketIn {
     private short stack;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         slotId = packetBuffer.readShort();
         stack = packetBuffer.readShort();
     }

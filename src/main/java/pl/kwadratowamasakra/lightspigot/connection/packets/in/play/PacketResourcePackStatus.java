@@ -12,7 +12,7 @@ public class PacketResourcePackStatus extends PacketIn {
     private PacketResourcePackStatus.Action status;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         hash = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 40));
         status = packetBuffer.readEnumValue(Action.class);
     }

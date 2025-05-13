@@ -28,7 +28,7 @@ public class PacketLoginStart extends PacketIn {
     private UUID uuid;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         username = packetBuffer.readString();
         uuid = UUIDUtil.getOfflineModeUUID(username);
     }

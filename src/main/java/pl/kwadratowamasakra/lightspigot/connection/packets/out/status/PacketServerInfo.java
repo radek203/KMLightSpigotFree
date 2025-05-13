@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class PacketServerInfo extends PacketOut {
     private String description;
 
     @Override
-    public final void write(final PacketBuffer packetBuffer) {
+    public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeString(String.format(TEMPLATE, version, protocol, maxPlayers, onlinePlayers, ChatUtil.fixColor("{\"text\": \"" + description + "\"}")));
     }
 

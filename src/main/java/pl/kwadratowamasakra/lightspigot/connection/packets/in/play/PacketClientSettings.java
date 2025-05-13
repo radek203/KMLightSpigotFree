@@ -15,7 +15,7 @@ public class PacketClientSettings extends PacketIn {
     private int modelPartFlags;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         lang = packetBuffer.readString(packetBuffer.readVarInt());
         view = packetBuffer.readByte();
         chatVisibility = packetBuffer.readByte();

@@ -12,7 +12,7 @@ public class PacketTabComplete extends PacketIn {
     private long targetBlock;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         message = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 32767));
         final boolean flag = packetBuffer.readBoolean();
 

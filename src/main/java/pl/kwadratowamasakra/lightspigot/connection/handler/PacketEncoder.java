@@ -9,6 +9,7 @@ import pl.kwadratowamasakra.lightspigot.connection.registry.Packet;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketManager;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 /**
  * The PacketEncoder class is an encoder for packets.
@@ -18,6 +19,7 @@ import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
     private final LightSpigotServer server;
+    private final PlayerConnection connection;
     private final PacketManager packetManager;
 
     /**
@@ -25,10 +27,12 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
      *
      * @param server        The server that the encoder is associated with.
      * @param packetManager The packet manager that the encoder uses to get the id of the packet and write it to a new ByteBuf.
+     * @param connection    The connection that the decoder is associated with.
      */
-    public PacketEncoder(final LightSpigotServer server, final PacketManager packetManager) {
+    public PacketEncoder(final LightSpigotServer server, final PacketManager packetManager, final PlayerConnection connection) {
         this.server = server;
         this.packetManager = packetManager;
+        this.connection = connection;
     }
 
     /**
@@ -42,7 +46,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
      * @param byteBuf        The ByteBuf to which the encoded packet is written.
      */
     protected final void encode(final ChannelHandlerContext handlerContext, final Packet packet, final ByteBuf byteBuf) {
-        final int packetId = packetManager.getPacketId(PacketDirection.OUT, packet.getClass());
+        final int packetId = packetManager.getPacketId(PacketDirection.OUT, connection.getVersion(), packet.getClass());
         if (packetId < 0) {
             server.getLogger().error("PacketEncoder error", "Returned PacketId by registry is < 0 (" + packetId + ")");
             return;
@@ -50,7 +54,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
         final PacketBuffer buffer = new PacketBuffer();
         buffer.writeVarInt(packetId);
-        ((PacketOut) packet).write(buffer);
+        ((PacketOut) packet).write(connection, buffer);
 
         byteBuf.writeBytes(buffer.getBuf());
     }

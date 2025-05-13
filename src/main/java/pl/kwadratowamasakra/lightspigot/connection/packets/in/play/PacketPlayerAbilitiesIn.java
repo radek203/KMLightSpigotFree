@@ -16,7 +16,7 @@ public class PacketPlayerAbilitiesIn extends PacketIn {
     private float walkSpeed;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         final byte b0 = packetBuffer.readByte();
         invulnerable = (b0 & 1) > 0;
         flying = (b0 & 2) > 0;

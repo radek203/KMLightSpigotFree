@@ -12,7 +12,7 @@ public class PacketEnchantItem extends PacketIn {
     private int button;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         windowId = packetBuffer.readByte();
         button = packetBuffer.readByte();
     }

@@ -14,7 +14,7 @@ public class PacketInput extends PacketIn {
     private boolean sneaking;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         strafeSpeed = packetBuffer.readFloat();
         forwardSpeed = packetBuffer.readFloat();
         final byte b0 = packetBuffer.readByte();

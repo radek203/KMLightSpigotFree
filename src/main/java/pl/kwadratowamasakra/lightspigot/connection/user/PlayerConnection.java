@@ -7,6 +7,7 @@ import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.command.CommandSender;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
 import pl.kwadratowamasakra.lightspigot.connection.PacketLimiter;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionDecoder;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionEncoder;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketDisconnect;
@@ -37,6 +38,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
     private final PermissionManager permissionManager = new PermissionManager();
     private ConnectionState connectionState;
     private GameProfile gameProfile;
+    private Version version = Version.UNDEFINED;
 
     /**
      * Constructs a new PlayerConnection with the specified channel and server.
@@ -234,6 +236,22 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final Channel getChannel() {
         return channel;
+    }
+
+    /**
+     * @return The game version that player uses
+     */
+    public final Version getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the game version that player uses
+     *
+     * @param version The version to set.
+     */
+    public final void setVersion(final Version version) {
+        this.version = version;
     }
 
     /**

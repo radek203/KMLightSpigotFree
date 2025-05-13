@@ -12,7 +12,7 @@ public class PacketPing extends PacketIn {
     private long a;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         a = packetBuffer.readLong();
     }
 

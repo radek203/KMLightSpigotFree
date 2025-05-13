@@ -11,7 +11,7 @@ public class PacketClientStatus extends PacketIn {
     private PacketClientStatus.EnumState status;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         status = packetBuffer.readEnumValue(EnumState.class);
     }
 

@@ -13,7 +13,7 @@ public class PacketConfirmTransaction extends PacketIn {
     private boolean accepted;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         windowId = packetBuffer.readByte();
         uid = packetBuffer.readShort();
         accepted = packetBuffer.readByte() != 0;

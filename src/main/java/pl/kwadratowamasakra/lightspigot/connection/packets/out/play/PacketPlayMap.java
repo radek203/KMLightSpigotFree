@@ -3,6 +3,7 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.out.play;
 import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.utils.maps.MapIcon;
 
 import java.util.Collection;
@@ -39,7 +40,7 @@ public class PacketPlayMap extends PacketOut {
     }
 
     @Override
-    public final void write(final PacketBuffer packetBuffer) {
+    public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeVarInt(mapId);
         packetBuffer.writeByte(scale);
         packetBuffer.writeVarInt(icons.length);

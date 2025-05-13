@@ -13,7 +13,7 @@ public class PacketPlayerDigging extends PacketIn {
     private PacketPlayerDigging.Action status;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         status = packetBuffer.readEnumValue(Action.class);
         position = packetBuffer.readLong();
         facing = packetBuffer.readUnsignedByte();

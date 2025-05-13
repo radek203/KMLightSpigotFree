@@ -11,7 +11,7 @@ public class PacketCloseWindow extends PacketIn {
     private int windowId;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         windowId = packetBuffer.readByte();
     }
 

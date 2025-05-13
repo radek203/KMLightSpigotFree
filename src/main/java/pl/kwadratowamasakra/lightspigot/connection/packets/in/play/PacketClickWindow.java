@@ -16,7 +16,7 @@ public class PacketClickWindow extends PacketIn {
     private int mode;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         windowId = packetBuffer.readByte();
         slotId = packetBuffer.readShort();
         usedButton = packetBuffer.readByte();

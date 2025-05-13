@@ -16,7 +16,7 @@ public class PacketPlayerBlockPlacement extends PacketIn {
     private float facingZ;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         position = packetBuffer.readLong();
         placedBlockDirection = packetBuffer.readUnsignedByte();
         if (packetBuffer.readableBytes() < 3) {

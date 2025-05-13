@@ -11,7 +11,7 @@ public class PacketKeepAliveIn extends PacketIn {
     private int id;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         id = packetBuffer.readVarInt();
     }
 

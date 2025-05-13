@@ -18,7 +18,7 @@ public class PacketPlayer extends PacketIn {
     //protected boolean rotating;
 
     @Override
-    public void read(final PacketBuffer packetBuffer) {
+    public void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
 
     }
 
@@ -74,34 +74,34 @@ public class PacketPlayer extends PacketIn {
 
     public static class PacketPlayerPosition extends PacketPlayer {
 
-        public final void read(final PacketBuffer packetBuffer) {
+        public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
             setX(packetBuffer.readDouble());
             setY(packetBuffer.readDouble());
             setZ(packetBuffer.readDouble());
-            super.read(packetBuffer);
+            super.read(connection, packetBuffer);
         }
 
     }
 
     public static class PacketPlayerLook extends PacketPlayer {
 
-        public final void read(final PacketBuffer packetBuffer) {
+        public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
             setYaw(packetBuffer.readFloat());
             setPitch(packetBuffer.readFloat());
-            super.read(packetBuffer);
+            super.read(connection, packetBuffer);
         }
 
     }
 
     public static class PacketPlayerPosLook extends PacketPlayer {
 
-        public final void read(final PacketBuffer packetBuffer) {
+        public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
             setX(packetBuffer.readDouble());
             setY(packetBuffer.readDouble());
             setZ(packetBuffer.readDouble());
             setYaw(packetBuffer.readFloat());
             setPitch(packetBuffer.readFloat());
-            super.read(packetBuffer);
+            super.read(connection, packetBuffer);
         }
 
     }
