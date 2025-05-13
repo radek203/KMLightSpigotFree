@@ -76,7 +76,7 @@ public enum Version {
         this.protocolNumber = protocolNumber;
     }
 
-    public static Version[] getVersionsBetween(Version versionMin, Version versionMax) {
+    public static Version[] getVersionsRange(Version versionMin, Version versionMax) {
         int min = Math.min(versionMin.protocolNumber, versionMax.protocolNumber);
         int max = Math.max(versionMin.protocolNumber, versionMax.protocolNumber);
 
@@ -87,6 +87,22 @@ public enum Version {
 
     public static Version of(int protocolNumber) {
         return VERSION_MAP.getOrDefault(protocolNumber, UNDEFINED);
+    }
+
+    public boolean isEqual(Version version) {
+        return protocolNumber == version.getProtocolNumber();
+    }
+
+    public boolean isLessThan(Version version) {
+        return protocolNumber < version.getProtocolNumber();
+    }
+
+    public boolean isEqualOrHigher(Version version) {
+        return protocolNumber >= version.getProtocolNumber();
+    }
+
+    public boolean isInRange(Version versionMin, Version versionMax) {
+        return versionMin.getProtocolNumber() <= protocolNumber && versionMax.getProtocolNumber() >= protocolNumber;
     }
 
     public boolean isSupported() {

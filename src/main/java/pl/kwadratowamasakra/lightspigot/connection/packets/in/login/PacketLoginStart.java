@@ -84,7 +84,7 @@ public class PacketLoginStart extends PacketIn {
         final PlayerLoginEvent event = new PlayerLoginEvent(connection, new Location(0.0, 100.0, 0.0, 0.0f, 0.0f));
         server.getEventManager().handleEvent(event);
 
-        connection.writePacket(new PacketPlayerPosLook(event.getLocation().getX(), event.getLocation().getY(), event.getLocation().getZ(), event.getLocation().getYaw(), event.getLocation().getPitch()));
+        connection.writePacket(new PacketPlayerPosLook(event.getLocation().getX(), event.getLocation().getY(), event.getLocation().getZ(), event.getLocation().getYaw(), event.getLocation().getPitch(), 0));
 
         connection.sendKeepAlive();
         server.getConnectionManager().addConnection(connection);

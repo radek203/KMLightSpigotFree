@@ -2,6 +2,7 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.in.play;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
@@ -13,6 +14,7 @@ public class PacketUseEntity extends PacketIn {
     private float hitVecX;
     private float hitVecY;
     private float hitVecZ;
+    private int hand;
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
@@ -23,6 +25,10 @@ public class PacketUseEntity extends PacketIn {
             hitVecX = packetBuffer.readFloat();
             hitVecY = packetBuffer.readFloat();
             hitVecZ = packetBuffer.readFloat();
+        }
+
+        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
+            hand = packetBuffer.readVarInt();
         }
     }
 

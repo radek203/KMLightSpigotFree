@@ -47,7 +47,7 @@ public class PacketHandshake extends PacketIn {
                 return;
             }
         }
-        server.getLogger().connection(ConsoleColors.CYAN + "PacketHandshake" + ConsoleColors.RESET + " Client: " + connection.getIp() + " Version: " + version + " State: " + nextState);
+        server.getLogger().connection(ConsoleColors.CYAN + "PacketHandshake" + ConsoleColors.RESET + " Client: " + connection.getIp() + " Version: " + connection.getVersion() + " State: " + nextState);
         connection.setConnectionState(nextState == 1 ? ConnectionState.STATUS : ConnectionState.LOGIN);
     }
 

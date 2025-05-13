@@ -36,8 +36,10 @@ public class PacketEntityAction extends PacketIn {
         STOP_SLEEPING,
         START_SPRINTING,
         STOP_SPRINTING,
-        RIDING_JUMP,
-        OPEN_INVENTORY
+        START_RIDING_JUMP, //RIDING_JUMP - 1.8
+        STOP_RIDING_JUMP, //OPEN_INVENTORY - 1.8
+        OPEN_INVENTORY,
+        START_FALL_FLYING
     }
 
 }

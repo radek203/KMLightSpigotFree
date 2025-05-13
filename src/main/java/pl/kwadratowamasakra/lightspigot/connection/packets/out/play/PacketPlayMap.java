@@ -1,6 +1,7 @@
 package pl.kwadratowamasakra.lightspigot.connection.packets.out.play;
 
 import lombok.NoArgsConstructor;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
@@ -14,6 +15,7 @@ public class PacketPlayMap extends PacketOut {
     private static final MapIcon[] A = new MapIcon[0];
     private int mapId;
     private byte scale;
+    private boolean track;
     private MapIcon[] icons;
     private int minX;
     private int minY;
@@ -21,9 +23,10 @@ public class PacketPlayMap extends PacketOut {
     private int maxY;
     private byte[] data;
 
-    public PacketPlayMap(final int mapId, final byte scale, final Collection<MapIcon> icons, final byte[] buffer, final int minX, final int minY, final int maxX, final int maxY) {
+    public PacketPlayMap(final int mapId, final byte scale, final boolean track, final Collection<MapIcon> icons, final byte[] buffer, final int minX, final int minY, final int maxX, final int maxY) {
         this.mapId = mapId;
         this.scale = scale;
+        this.track = track;
         this.icons = icons.toArray(A);
         this.minX = minX;
         this.minY = minY;
@@ -43,6 +46,9 @@ public class PacketPlayMap extends PacketOut {
     public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeVarInt(mapId);
         packetBuffer.writeByte(scale);
+        if (connection.getVersion().isEqualOrHigher(Version.V1_12_2)) {
+            packetBuffer.writeBoolean(track);
+        }
         packetBuffer.writeVarInt(icons.length);
 
         for (final MapIcon icon : icons) {
