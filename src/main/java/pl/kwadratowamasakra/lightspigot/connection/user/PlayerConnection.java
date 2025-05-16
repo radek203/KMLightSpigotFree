@@ -7,6 +7,7 @@ import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.command.CommandSender;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
 import pl.kwadratowamasakra.lightspigot.connection.PacketLimiter;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionDecoder;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionEncoder;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketDisconnect;
@@ -18,9 +19,7 @@ import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -30,13 +29,14 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PlayerConnection extends ChannelInboundHandlerAdapter implements CommandSender {
 
     private final List<Long> packetsCounter = new ArrayList<>();
-    private final List<PacketLimiter> packetsIndividualCounter = new ArrayList<>();
+    private final Map<Class<? extends PacketIn>, PacketLimiter> packetsIndividualCounter = new HashMap<>();
 
     private final Channel channel;
     private final LightSpigotServer server;
     private final PermissionManager permissionManager = new PermissionManager();
     private ConnectionState connectionState;
     private GameProfile gameProfile;
+    private Version version = Version.UNDEFINED;
 
     /**
      * Constructs a new PlayerConnection with the specified channel and server.
@@ -237,6 +237,22 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
     }
 
     /**
+     * @return The game version that player uses
+     */
+    public final Version getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the game version that player uses
+     *
+     * @param version The version to set.
+     */
+    public final void setVersion(final Version version) {
+        this.version = version;
+    }
+
+    /**
      * @return The game profile of the player.
      */
     public final GameProfile getGameProfile() {
@@ -371,14 +387,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      * @return The packet limiter for the packet.
      */
     private PacketLimiter getPacketCounterByPacket(final Class<? extends PacketIn> packet) {
-        for (final PacketLimiter packetLimiter : packetsIndividualCounter) {
-            if (packetLimiter.getPacketIn().equals(packet)) {
-                return packetLimiter;
-            }
-        }
-        final PacketLimiter packetLimiter = new PacketLimiter(packet);
-        packetsIndividualCounter.add(packetLimiter);
-        return packetLimiter;
+        return packetsIndividualCounter.computeIfAbsent(packet, p -> new PacketLimiter(packet));
     }
 
     /**
@@ -402,6 +411,18 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
     public final void sendActionBar(final String message) {
         if (message != null) {
             sendPacket(new PacketChat(message, (byte) 2));
+        }
+    }
+
+    /**
+     * Sends a tab's header and footer to the client.
+     *
+     * @param header The header to send.
+     * @param footer The footer to send.
+     */
+    public final void sendTabHeaderFooter(final String header, final String footer) {
+        if (header != null && footer != null) {
+            sendPacket(new PacketPlayerListHeaderFooter(header, footer));
         }
     }
 

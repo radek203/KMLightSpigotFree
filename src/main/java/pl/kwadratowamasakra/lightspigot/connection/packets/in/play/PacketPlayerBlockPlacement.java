@@ -2,6 +2,7 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.in.play;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
@@ -14,18 +15,23 @@ public class PacketPlayerBlockPlacement extends PacketIn {
     private float facingX;
     private float facingY;
     private float facingZ;
+    private int hand;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
-        position = packetBuffer.readLong();
-        placedBlockDirection = packetBuffer.readUnsignedByte();
-        if (packetBuffer.readableBytes() < 3) {
-            throw new IllegalArgumentException("Expected 3 facing bytes");
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
+            hand = packetBuffer.readVarInt();
+        } else {
+            position = packetBuffer.readLong();
+            placedBlockDirection = packetBuffer.readUnsignedByte();
+            if (packetBuffer.readableBytes() < 3) {
+                throw new IllegalArgumentException("Expected 3 facing bytes");
+            }
+            packetBuffer.skipBytes(packetBuffer.readableBytes() - 3);
+            facingX = packetBuffer.readUnsignedByte() / 16.0F;
+            facingY = packetBuffer.readUnsignedByte() / 16.0F;
+            facingZ = packetBuffer.readUnsignedByte() / 16.0F;
         }
-        packetBuffer.skipBytes(packetBuffer.readableBytes() - 3);
-        facingX = packetBuffer.readUnsignedByte() / 16.0F;
-        facingY = packetBuffer.readUnsignedByte() / 16.0F;
-        facingZ = packetBuffer.readUnsignedByte() / 16.0F;
     }
 
     @Override

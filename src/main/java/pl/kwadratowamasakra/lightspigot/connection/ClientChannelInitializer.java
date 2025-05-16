@@ -56,7 +56,7 @@ public class ClientChannelInitializer extends ChannelInitializer<Channel> {
         }
 
         final PacketDecoder decoder = new PacketDecoder(server, packetManager, connection);
-        final PacketEncoder encoder = new PacketEncoder(server, packetManager);
+        final PacketEncoder encoder = new PacketEncoder(server, packetManager, connection);
 
         final ChannelConfig config = channel.config();
         config.setOption(ChannelOption.TCP_NODELAY, true);

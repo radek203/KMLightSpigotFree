@@ -98,7 +98,7 @@ public final class CraftMapView implements MapView {
             }
         }
 
-        final PacketPlayMap packet = new PacketPlayMap(getId(), getScale().getValue(), icons, data.buffer, 0, 0, 128, 128);
+        final PacketPlayMap packet = new PacketPlayMap(getId(), getScale().getValue(), false, icons, data.buffer, 0, 0, 128, 128);
         connection.sendPacket(packet);
     }
 

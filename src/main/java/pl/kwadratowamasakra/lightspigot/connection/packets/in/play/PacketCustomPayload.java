@@ -12,7 +12,7 @@ public class PacketCustomPayload extends PacketIn {
     private PacketBuffer data;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         channel = packetBuffer.readString(packetBuffer.readVarInt());
         data = new PacketBuffer(packetBuffer.readBytes(packetBuffer.readableBytes()));
     }

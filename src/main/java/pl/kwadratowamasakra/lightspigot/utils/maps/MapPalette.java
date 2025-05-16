@@ -63,6 +63,7 @@ public final class MapPalette {
             c(91, 60, 34), c(111, 74, 42), c(129, 86, 49), c(68, 45, 25),
             c(79, 1, 0), c(96, 1, 0), c(112, 2, 0), c(59, 1, 0),
     };
+
     // Internal mechanisms
     private MapPalette() {
     }

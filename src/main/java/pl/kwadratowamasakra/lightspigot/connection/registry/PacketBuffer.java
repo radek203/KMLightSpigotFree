@@ -57,6 +57,17 @@ public class PacketBuffer extends ByteBuf {
         }
     }
 
+    public ItemStack readItemStack() {
+        short itemId = readShort();
+        if (itemId == -1) {
+            return new ItemStack();
+        }
+        byte count = readByte();
+        short data = readShort();
+        byte b = readByte();
+        return new ItemStack(itemId, count, data);
+    }
+
     public final int readVarInt() {
         int i = 0;
         final int maxRead = Math.min(5, buf.readableBytes());

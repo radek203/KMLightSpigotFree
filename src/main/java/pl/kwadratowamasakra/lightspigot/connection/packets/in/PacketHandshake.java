@@ -2,6 +2,7 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.in;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
@@ -17,7 +18,7 @@ public class PacketHandshake extends PacketIn {
     private int nextState;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         version = packetBuffer.readVarInt();
         host = packetBuffer.readString();
         port = packetBuffer.readUnsignedShort();
@@ -30,9 +31,11 @@ public class PacketHandshake extends PacketIn {
         if (nextState != 1 && nextState != 2) {
             throw new IllegalArgumentException("Illegal nextState in PacketHandshake");
         }
+        connection.setVersion(Version.of(version));
 
         if (nextState == 2) {
-            final PlayerHandshakeEvent e = new PlayerHandshakeEvent(connection, version == 47, version == 47 ? null : ChatUtil.fixColor(server.getConfig().getBadVersion()));
+            final boolean versionSupported = connection.getVersion().isSupported();
+            final PlayerHandshakeEvent e = new PlayerHandshakeEvent(connection, versionSupported, versionSupported ? null : ChatUtil.fixColor(server.getConfig().getBadVersion()));
             server.getEventManager().handleEvent(e);
             if (!e.isAccepted()) {
                 connection.disconnect(e.getReason());
@@ -44,7 +47,7 @@ public class PacketHandshake extends PacketIn {
                 return;
             }
         }
-        server.getLogger().connection(ConsoleColors.CYAN + "PacketHandshake" + ConsoleColors.RESET + " Client: " + connection.getIp() + " Version: " + version + " State: " + nextState);
+        server.getLogger().connection(ConsoleColors.CYAN + "PacketHandshake" + ConsoleColors.RESET + " Client: " + connection.getIp() + " Version: " + connection.getVersion() + " State: " + nextState);
         connection.setConnectionState(nextState == 1 ? ConnectionState.STATUS : ConnectionState.LOGIN);
     }
 

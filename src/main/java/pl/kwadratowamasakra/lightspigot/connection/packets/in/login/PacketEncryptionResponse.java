@@ -13,7 +13,7 @@ public class PacketEncryptionResponse extends PacketIn {
     private byte[] verifyTokenEncrypted = BYTES;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         secretKeyEncrypted = packetBuffer.readBytesArray();
         verifyTokenEncrypted = packetBuffer.readBytesArray();
     }

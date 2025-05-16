@@ -5,13 +5,13 @@ server:
   port: 25565
   ops: [ "radek203" ]
 checks:
-  badVersion: "&cYou are using the wrong version of Minecraft! Switch to: 1.8.8 or 1.8.9"
+  badVersion: "&cYou are using the wrong version of Minecraft! Switch to: 1.8.x or 1.12.2"
   blockedNames: [ "proxy", "mcstorm", "mcdrop", "mcdown", "null", "spam" ]
   badNameLength: "&cNickname must be between 3 and 16 characters!"
   badNameChars: "&cYour nickname contains forbidden characters &8>> &7"
   badName: "&cYou cannot join using such a nickname!"
 motd:
-  version: "KMLightSpigot 1.8.9"
+  version: "KMLightSpigot"
   description: "&eThe server is running the KMLightSpigot engine!\nCreated by: radek203"
 command:
   notExists: "&cSuch a command does not exist!"

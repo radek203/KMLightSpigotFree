@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +13,7 @@ public class PacketKickDisconnect extends PacketOut {
     private String reason;
 
     @Override
-    public void write(final PacketBuffer packetBuffer) {
+    public void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeString(String.format("{\"text\": \"%s\"}", reason));
     }
 

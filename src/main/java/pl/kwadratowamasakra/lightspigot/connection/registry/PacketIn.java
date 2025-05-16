@@ -14,7 +14,7 @@ public abstract class PacketIn implements Packet {
      *
      * @param packetBuffer The packet buffer to read from.
      */
-    public abstract void read(PacketBuffer packetBuffer);
+    public abstract void read(PlayerConnection connection, PacketBuffer packetBuffer);
 
     /**
      * Handles the packet after it has been read.

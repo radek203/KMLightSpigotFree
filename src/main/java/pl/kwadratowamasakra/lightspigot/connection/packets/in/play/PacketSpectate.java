@@ -13,7 +13,7 @@ public class PacketSpectate extends PacketIn {
     private UUID id;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         id = packetBuffer.readUUID();
     }
 

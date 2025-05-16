@@ -2,6 +2,7 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.in.play;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
@@ -12,8 +13,10 @@ public class PacketResourcePackStatus extends PacketIn {
     private PacketResourcePackStatus.Action status;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
-        hash = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 40));
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+        if (connection.getVersion().isEqual(Version.V1_8)) {
+            hash = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 40));
+        }
         status = packetBuffer.readEnumValue(Action.class);
     }
 

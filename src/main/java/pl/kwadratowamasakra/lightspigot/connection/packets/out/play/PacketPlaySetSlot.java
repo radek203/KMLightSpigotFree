@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 @AllArgsConstructor
@@ -15,7 +16,7 @@ public class PacketPlaySetSlot extends PacketOut {
     private ItemStack itemStack;
 
     @Override
-    public final void write(final PacketBuffer packetBuffer) {
+    public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeByte(containerId);
         packetBuffer.writeShort(slot);
         packetBuffer.writeItemStack(itemStack);

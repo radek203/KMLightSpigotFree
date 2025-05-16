@@ -2,17 +2,22 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.in.play;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 public class PacketKeepAliveIn extends PacketIn {
 
-    private int id;
+    private long id;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
-        id = packetBuffer.readVarInt();
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+        if (connection.getVersion().isEqualOrHigher(Version.V1_12_2)) {
+            id = packetBuffer.readLong();
+        } else {
+            id = packetBuffer.readVarInt();
+        }
     }
 
     @Override

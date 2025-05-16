@@ -14,7 +14,7 @@ public class PacketChatMessage extends PacketIn {
     private String message;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         message = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 100));
     }
 

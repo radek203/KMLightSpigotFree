@@ -3,6 +3,7 @@ package pl.kwadratowamasakra.lightspigot.connection.registry;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
 import pl.kwadratowamasakra.lightspigot.connection.PacketDirection;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.packets.in.PacketHandshake;
 import pl.kwadratowamasakra.lightspigot.connection.packets.in.login.PacketEncryptionResponse;
 import pl.kwadratowamasakra.lightspigot.connection.packets.in.login.PacketLoginStart;
@@ -28,67 +29,78 @@ import java.util.Map;
  */
 public class PacketManager {
 
-    private final Map<PacketDirection, Map<ConnectionState, Map<Integer, RegisteredPacket>>> packets = new EnumMap<>(PacketDirection.class);
+    private final Map<PacketDirection, Map<Version, Map<ConnectionState, Map<Integer, RegisteredPacket>>>> packets = new EnumMap<>(PacketDirection.class);
 
     /**
      * Registers all the packets that will be used in the network communication.
+     * clientBound - OUT
+     * serverBound - IN
      *
      * @param server The server that will be using the packets.
      */
     public final void registerPackets(final LightSpigotServer server) {
-        registerPacket(server, PacketDirection.IN, ConnectionState.HANDSHAKING, 0x00, PacketHandshake.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.HANDSHAKING, Map.of(Version.values(), 0x00), PacketHandshake.class);
 
-        registerPacket(server, PacketDirection.IN, ConnectionState.STATUS, 0x00, PacketServerQuery.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.STATUS, 0x01, PacketPing.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.STATUS, Map.of(Version.values(), 0x00), PacketServerQuery.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.STATUS, Map.of(Version.values(), 0x01), PacketPing.class);
 
-        registerPacket(server, PacketDirection.OUT, ConnectionState.STATUS, 0x00, PacketServerInfo.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.STATUS, 0x01, PacketPong.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.STATUS, Map.of(Version.values(), 0x00), PacketServerInfo.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.STATUS, Map.of(Version.values(), 0x01), PacketPong.class);
 
-        registerPacket(server, PacketDirection.IN, ConnectionState.LOGIN, 0x00, PacketLoginStart.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.LOGIN, 0x01, PacketEncryptionResponse.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.LOGIN, Map.of(Version.values(), 0x00), PacketLoginStart.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.LOGIN, Map.of(Version.values(), 0x01), PacketEncryptionResponse.class);
 
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, 0x00, PacketDisconnect.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, 0x01, PacketEncryptionRequest.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, 0x02, PacketLoginSuccess.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, 0x03, PacketEnableCompression.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, Map.of(Version.values(), 0x00), PacketDisconnect.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, Map.of(Version.values(), 0x01), PacketEncryptionRequest.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, Map.of(Version.values(), 0x02), PacketLoginSuccess.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, Map.of(Version.values(), 0x03), PacketEnableCompression.class);
 
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x00, PacketKeepAliveIn.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x01, PacketChatMessage.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x02, PacketUseEntity.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x03, PacketPlayer.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x04, PacketPlayer.PacketPlayerPosition.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x05, PacketPlayer.PacketPlayerLook.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x06, PacketPlayer.PacketPlayerPosLook.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x07, PacketPlayerDigging.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x08, PacketPlayerBlockPlacement.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x09, PacketHeldItemChange.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x0A, PacketAnimation.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x0B, PacketEntityAction.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x0C, PacketInput.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x0D, PacketCloseWindow.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x0E, PacketClickWindow.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x0F, PacketConfirmTransaction.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x10, PacketCreativeInventoryAction.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x11, PacketEnchantItem.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x12, PacketUpdateSign.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x13, PacketPlayerAbilitiesIn.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x14, PacketTabComplete.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x15, PacketClientSettings.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x16, PacketClientStatus.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x17, PacketCustomPayload.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x18, PacketSpectate.class);
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, 0x19, PacketResourcePackStatus.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_12_2}, 0x00), PacketTeleportAccept.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x00, new Version[]{Version.V1_12_2}, 0x0B), PacketKeepAliveIn.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x01, new Version[]{Version.V1_12_2}, 0x02), PacketChatMessage.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x02, new Version[]{Version.V1_12_2}, 0x0A), PacketUseEntity.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x03, new Version[]{Version.V1_12_2}, 0x0C), PacketPlayer.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x04, new Version[]{Version.V1_12_2}, 0x0D), PacketPlayer.PacketPlayerPosition.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x05, new Version[]{Version.V1_12_2}, 0x0E), PacketPlayer.PacketPlayerLook.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x06, new Version[]{Version.V1_12_2}, 0x0F), PacketPlayer.PacketPlayerPosLook.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x07, new Version[]{Version.V1_12_2}, 0x14), PacketPlayerDigging.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x08, new Version[]{Version.V1_12_2}, 0x20), PacketPlayerBlockPlacement.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x09, new Version[]{Version.V1_12_2}, 0x1A), PacketHeldItemChange.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x0A, new Version[]{Version.V1_12_2}, 0x1D), PacketAnimation.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x0B, new Version[]{Version.V1_12_2}, 0x15), PacketEntityAction.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x0C, new Version[]{Version.V1_12_2}, 0x16), PacketInput.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x0D, new Version[]{Version.V1_12_2}, 0x08), PacketCloseWindow.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x0E, new Version[]{Version.V1_12_2}, 0x07), PacketClickWindow.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x0F, new Version[]{Version.V1_12_2}, 0x05), PacketConfirmTransaction.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x10, new Version[]{Version.V1_12_2}, 0x1B), PacketCreativeInventoryAction.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x11, new Version[]{Version.V1_12_2}, 0x06), PacketEnchantItem.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x12, new Version[]{Version.V1_12_2}, 0x1C), PacketUpdateSign.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x13, new Version[]{Version.V1_12_2}, 0x13), PacketPlayerAbilitiesIn.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x14, new Version[]{Version.V1_12_2}, 0x01), PacketTabComplete.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x15, new Version[]{Version.V1_12_2}, 0x04), PacketClientSettings.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x16, new Version[]{Version.V1_12_2}, 0x03), PacketClientStatus.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x17, new Version[]{Version.V1_12_2}, 0x09), PacketCustomPayload.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x18, new Version[]{Version.V1_12_2}, 0x1E), PacketSpectate.class);
+        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x19, new Version[]{Version.V1_12_2}, 0x18), PacketResourcePackStatus.class);
 
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x00, PacketKeepAliveOut.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x01, PacketJoinGame.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x02, PacketChat.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x08, PacketPlayerPosLook.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x2F, PacketPlaySetSlot.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x34, PacketPlayMap.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x39, PacketPlayerAbilitiesOut.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x40, PacketKickDisconnect.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x45, PacketTitle.class);
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, 0x47, PacketPlayerListHeaderFooter.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x00, new Version[]{Version.V1_12_2}, 0x1F), PacketKeepAliveOut.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x01, new Version[]{Version.V1_12_2}, 0x23), PacketJoinGame.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x02, new Version[]{Version.V1_12_2}, 0x0F), PacketChat.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x08, new Version[]{Version.V1_12_2}, 0x2F), PacketPlayerPosLook.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x2F, new Version[]{Version.V1_12_2}, 0x16), PacketPlaySetSlot.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x34, new Version[]{Version.V1_12_2}, 0x24), PacketPlayMap.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x39, new Version[]{Version.V1_12_2}, 0x2C), PacketPlayerAbilitiesOut.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x40, new Version[]{Version.V1_12_2}, 0x1A), PacketKickDisconnect.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x45, new Version[]{Version.V1_12_2}, 0x48), PacketTitle.class);
+        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, Map.of(new Version[]{Version.V1_8}, 0x47, new Version[]{Version.V1_12_2}, 0x4A), PacketPlayerListHeaderFooter.class);
+    }
+
+    private void registerPacket(final LightSpigotServer server, final PacketDirection direction, final ConnectionState connectionState, final Map<Version[], Integer> versions, final Class<? extends Packet> packet) {
+        for (Map.Entry<Version[], Integer> version : versions.entrySet()) {
+            for (Version singleVersion : version.getKey()) {
+                registerPacket(server, direction, connectionState, singleVersion, version.getValue(), packet);
+            }
+        }
     }
 
     /**
@@ -100,20 +112,17 @@ public class PacketManager {
      * @param packetId        The ID of the packet.
      * @param packet          The class of the packet.
      */
-    private void registerPacket(final LightSpigotServer server, final PacketDirection direction, final ConnectionState connectionState, final int packetId, final Class<? extends Packet> packet) {
-        if (containsPacketId(direction, connectionState, packetId)) {
-            server.getLogger().error("PacketManager.registerPacket(...) error", "PacketID is already in use (" + packetId + ")");
+    private void registerPacket(final LightSpigotServer server, final PacketDirection direction, final ConnectionState connectionState, final Version version, final int packetId, final Class<? extends Packet> packet) {
+        if (containsPacketId(direction, version, connectionState, packetId)) {
+            server.getLogger().error("PacketManager.registerPacket(...) error", "PacketID is already in use (" + packetId + ", " + packet.getName() + ", " + version + ")");
             return;
         }
         try {
             final RegisteredPacket registeredPacket = new RegisteredPacket(packet);
-            if (!packets.containsKey(direction)) {
-                packets.put(direction, new EnumMap<>(ConnectionState.class));
-            }
-            if (!packets.get(direction).containsKey(connectionState)) {
-                packets.get(direction).put(connectionState, new HashMap<>());
-            }
-            packets.get(direction).get(connectionState).put(packetId, registeredPacket);
+            packets.computeIfAbsent(direction, k -> new EnumMap<>(Version.class))
+                    .computeIfAbsent(version, k -> new EnumMap<>(ConnectionState.class))
+                    .computeIfAbsent(connectionState, k -> new HashMap<>())
+                    .put(packetId, registeredPacket);
         } catch (final NoSuchMethodException e) {
             server.getLogger().error("PacketManager.registerPacket(...) error", "Failed to register packet (" + packetId + ")\n" + e.getMessage());
         }
@@ -126,8 +135,8 @@ public class PacketManager {
      * @param packetClass The class of the packet.
      * @return The ID of the packet.
      */
-    public final int getPacketId(final PacketDirection direction, final Class<? extends Packet> packetClass) {
-        for (final Map.Entry<ConnectionState, Map<Integer, RegisteredPacket>> it : packets.get(direction).entrySet()) {
+    public final int getPacketId(final PacketDirection direction, final Version version, final Class<? extends Packet> packetClass) {
+        for (final Map.Entry<ConnectionState, Map<Integer, RegisteredPacket>> it : packets.get(direction).get(version).entrySet()) {
             for (final Map.Entry<Integer, RegisteredPacket> its : it.getValue().entrySet()) {
                 if (its.getValue().getPacketClass().equals(packetClass)) {
                     return its.getKey();
@@ -148,8 +157,8 @@ public class PacketManager {
      * @throws InstantiationException    If the class that declares the underlying constructor represents an abstract class.
      * @throws IllegalAccessException    If the underlying constructor is inaccessible.
      */
-    public final Packet constructPacket(final PacketDirection direction, final ConnectionState connectionState, final int packetId) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        return packets.get(direction).get(connectionState).get(packetId).getConstructor().newInstance();
+    public final Packet constructPacket(final PacketDirection direction, final Version version, final ConnectionState connectionState, final int packetId) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        return packets.get(direction).get(version).get(connectionState).get(packetId).getConstructor().newInstance();
     }
 
     /**
@@ -160,10 +169,12 @@ public class PacketManager {
      * @param id              The ID of the packet.
      * @return True if the packet ID exists, false otherwise.
      */
-    public final boolean containsPacketId(final PacketDirection direction, final ConnectionState connectionState, final int id) {
+    public final boolean containsPacketId(final PacketDirection direction, final Version version, final ConnectionState connectionState, final int id) {
         if (packets.containsKey(direction)) {
-            if (packets.get(direction).containsKey(connectionState)) {
-                return packets.get(direction).get(connectionState).containsKey(id);
+            if (packets.get(direction).containsKey(version)) {
+                if (packets.get(direction).get(version).containsKey(connectionState)) {
+                    return packets.get(direction).get(version).get(connectionState).containsKey(id);
+                }
             }
         }
         return false;

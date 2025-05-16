@@ -11,7 +11,7 @@ import pl.kwadratowamasakra.lightspigot.event.PlayerServerStatusEvent;
 public class PacketServerQuery extends PacketIn {
 
     @Override
-    public void read(final PacketBuffer packetBuffer) {
+    public void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
     }
 
     @Override
@@ -21,7 +21,7 @@ public class PacketServerQuery extends PacketIn {
             connection.closeConnection();
             return;
         }
-        final PlayerServerStatusEvent e = new PlayerServerStatusEvent(server.getConfig().getMotdVersion(), 47, server.getConnectionManager().getMaxPlayers(), server.getConnectionManager().getOnlinePlayers(), server.getConfig().getMotdDescription());
+        final PlayerServerStatusEvent e = new PlayerServerStatusEvent(server.getConfig().getMotdVersion(), connection.getVersion().getProtocolNumber(), server.getConnectionManager().getMaxPlayers(), server.getConnectionManager().getOnlinePlayers(), server.getConfig().getMotdDescription());
         server.getEventManager().handleEvent(e);
         connection.sendPacket(new PacketServerInfo(e.getVersion(), e.getProtocol(), e.getMaxPlayers(), e.getOnlinePlayers(), e.getDescription()));
     }

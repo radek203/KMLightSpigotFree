@@ -9,7 +9,7 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 public class PacketUpdateSign extends PacketIn {
 
     @Override
-    public void read(final PacketBuffer packetBuffer) {
+    public void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
 
     }
 

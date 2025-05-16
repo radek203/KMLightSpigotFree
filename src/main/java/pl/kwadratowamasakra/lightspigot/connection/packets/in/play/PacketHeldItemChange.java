@@ -11,7 +11,7 @@ public class PacketHeldItemChange extends PacketIn {
     private int slotId;
 
     @Override
-    public final void read(final PacketBuffer packetBuffer) {
+    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         slotId = packetBuffer.readShort();
     }
 
