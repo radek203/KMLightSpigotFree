@@ -5,8 +5,8 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.event.PlayerCommandEvent;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class CommandManager {
 
     private static final Pattern COMPILE = Pattern.compile("/");
-    private final List<Command> commands = new ArrayList<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     /**
      * Adds a command to the command manager.
@@ -27,7 +27,10 @@ public class CommandManager {
     public final void addCommand(final Command command) {
         final Command check = getCommandByName(command.getCommandName());
         if (check == null) {
-            commands.add(command);
+            commands.put(command.getCommandName().toLowerCase(), command);
+            for (final String alias : command.getAliases()) {
+                commands.put(alias.toLowerCase(), command);
+            }
         }
     }
 
@@ -38,12 +41,7 @@ public class CommandManager {
      * @return The command if found, null otherwise.
      */
     private Command getCommandByName(final String commandName) {
-        for (final Command command : commands) {
-            if (command.getCommandName().equals(commandName) || command.getAliases().contains(commandName)) {
-                return command;
-            }
-        }
-        return null;
+        return commands.get(commandName.toLowerCase());
     }
 
     /**
