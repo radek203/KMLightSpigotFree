@@ -50,7 +50,10 @@ public enum Version {
     V1_20_2(764),
     V1_20_3(765),
     V1_20_5(766), // 1.20.5-1.20.6
-    V1_21(767);
+    V1_21(767), //1.21-1.21.1
+    V1_21_2(768), //1.21.2-1.21.3
+    V1_21_4(769),
+    V1_21_5(770);
 
     private static final Map<Integer, Version> VERSION_MAP = new HashMap<>();
     @Getter
