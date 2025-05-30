@@ -83,12 +83,12 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
 
         final PacketBuffer buffer = new PacketBuffer(byteBuf);
         final int packetId = buffer.readVarInt();
-        if (!packetManager.containsPacketId(PacketDirection.IN, connection.getVersion(), connection.getConnectionState(), packetId)) {
+        if (!packetManager.containsPacketId(PacketDirection.SERVERBOUND, connection.getVersion(), connection.getConnectionState(), packetId)) {
             throw new DecoderException("Received invalid PacketId (" + packetId + ", " + connection.getConnectionState() + ")");
         }
         final Packet packet;
         try {
-            packet = packetManager.constructPacket(PacketDirection.IN, connection.getVersion(), connection.getConnectionState(), packetId);
+            packet = packetManager.constructPacket(PacketDirection.SERVERBOUND, connection.getVersion(), connection.getConnectionState(), packetId);
         } catch (final InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new DecoderException("Decoder error while constructing PacketId (" + packetId + ", " + connection.getConnectionState() + ")");
         }

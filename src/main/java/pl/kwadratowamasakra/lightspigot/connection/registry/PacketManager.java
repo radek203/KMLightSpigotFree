@@ -4,19 +4,19 @@ import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
 import pl.kwadratowamasakra.lightspigot.connection.PacketDirection;
 import pl.kwadratowamasakra.lightspigot.connection.Version;
-import pl.kwadratowamasakra.lightspigot.connection.packets.in.PacketHandshake;
-import pl.kwadratowamasakra.lightspigot.connection.packets.in.login.PacketEncryptionResponse;
-import pl.kwadratowamasakra.lightspigot.connection.packets.in.login.PacketLoginStart;
+import pl.kwadratowamasakra.lightspigot.connection.packets.in.PacketHandshakingInSetProtocol;
+import pl.kwadratowamasakra.lightspigot.connection.packets.in.login.PacketLoginInEncryptionBegin;
+import pl.kwadratowamasakra.lightspigot.connection.packets.in.login.PacketLoginInStart;
 import pl.kwadratowamasakra.lightspigot.connection.packets.in.play.*;
-import pl.kwadratowamasakra.lightspigot.connection.packets.in.status.PacketPing;
-import pl.kwadratowamasakra.lightspigot.connection.packets.in.status.PacketServerQuery;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketDisconnect;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketEnableCompression;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketEncryptionRequest;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginSuccess;
+import pl.kwadratowamasakra.lightspigot.connection.packets.in.status.PacketStatusInPing;
+import pl.kwadratowamasakra.lightspigot.connection.packets.in.status.PacketStatusInStart;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutDisconnect;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutEncryptionBegin;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutSetCompression;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutSuccess;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.*;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.status.PacketPong;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.status.PacketServerInfo;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.status.PacketStatusOutPong;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.status.PacketStatusOutServerInfo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumMap;
@@ -45,59 +45,57 @@ public class PacketManager {
 
     /**
      * Registers all the packets that will be used in the network communication.
-     * clientBound - OUT
-     * serverBound - IN
      *
      * @param server The server that will be using the packets.
      */
     public final void registerPackets(final LightSpigotServer server) {
-        registerPacket(server, PacketDirection.IN, ConnectionState.HANDSHAKING, PacketHandshake.class, map(0x00));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.HANDSHAKING, PacketHandshakingInSetProtocol.class, map(0x00));
 
-        registerPacket(server, PacketDirection.IN, ConnectionState.STATUS, PacketServerQuery.class, map(0x00));
-        registerPacket(server, PacketDirection.IN, ConnectionState.STATUS, PacketPing.class, map(0x01));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.STATUS, PacketStatusInStart.class, map(0x00));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.STATUS, PacketStatusInPing.class, map(0x01));
 
-        registerPacket(server, PacketDirection.OUT, ConnectionState.STATUS, PacketServerInfo.class, map(0x00));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.STATUS, PacketPong.class, map(0x01));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.STATUS, PacketStatusOutServerInfo.class, map(0x00));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.STATUS, PacketStatusOutPong.class, map(0x01));
 
-        registerPacket(server, PacketDirection.IN, ConnectionState.LOGIN, PacketLoginStart.class, map(0x00));
-        registerPacket(server, PacketDirection.IN, ConnectionState.LOGIN, PacketEncryptionResponse.class, map(0x01));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.LOGIN, PacketLoginInStart.class, map(0x00));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.LOGIN, PacketLoginInEncryptionBegin.class, map(0x01));
 
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, PacketDisconnect.class, map(0x00));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, PacketEncryptionRequest.class, map(0x01));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, PacketLoginSuccess.class, map(0x02));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.LOGIN, PacketEnableCompression.class, map(0x03));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.LOGIN, PacketLoginOutDisconnect.class, map(0x00));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.LOGIN, PacketLoginOutEncryptionBegin.class, map(0x01));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.LOGIN, PacketLoginOutSuccess.class, map(0x02));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.LOGIN, PacketLoginOutSetCompression.class, map(0x03));
 
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketTeleportAccept.class, map(Version.V1_12_2, 0x00));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketKeepAliveIn.class, map(Version.V1_8, 0x00), map(Version.V1_12_2, 0x0B));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketChatMessage.class, map(Version.V1_8, 0x01), map(Version.V1_12_2, 0x02));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketPlayer.class, map(Version.V1_8, 0x03), map(Version.V1_12_2, 0x0C));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketPlayer.PacketPlayerPosition.class, map(Version.V1_8, 0x04), map(Version.V1_12_2, 0x0D));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketPlayer.PacketPlayerLook.class, map(Version.V1_8, 0x05), map(Version.V1_12_2, 0x0E));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketPlayer.PacketPlayerPosLook.class, map(Version.V1_8, 0x06), map(Version.V1_12_2, 0x0F));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketPlayerDigging.class, map(Version.V1_8, 0x07), map(Version.V1_12_2, 0x14));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketPlayerBlockPlacement.class, map(Version.V1_8, 0x08), map(Version.V1_12_2, 0x20));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketHeldItemChange.class, map(Version.V1_8, 0x09), map(Version.V1_12_2, 0x1A));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketAnimation.class, map(Version.V1_8, 0x0A), map(Version.V1_12_2, 0x1D));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketEntityAction.class, map(Version.V1_8, 0x0B), map(Version.V1_12_2, 0x15));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketCloseWindow.class, map(Version.V1_8, 0x0D), map(Version.V1_12_2, 0x08));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketClickWindow.class, map(Version.V1_8, 0x0E), map(Version.V1_12_2, 0x07));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketConfirmTransaction.class, map(Version.V1_8, 0x0F), map(Version.V1_12_2, 0x05));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketCreativeInventoryAction.class, map(Version.V1_8, 0x10), map(Version.V1_12_2, 0x1B));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketTabComplete.class, map(Version.V1_8, 0x14), map(Version.V1_12_2, 0x01));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketClientSettings.class, map(Version.V1_8, 0x15), map(Version.V1_12_2, 0x04));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketClientStatus.class, map(Version.V1_8, 0x16), map(Version.V1_12_2, 0x03));
-        registerPacket(server, PacketDirection.IN, ConnectionState.PLAY, PacketCustomPayload.class, map(Version.V1_8, 0x17), map(Version.V1_12_2, 0x09));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInTeleportAccept.class, map(Version.V1_12_2, 0x00));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInKeepAlive.class, map(Version.V1_8, 0x00), map(Version.V1_12_2, 0x0B));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInChat.class, map(Version.V1_8, 0x01), map(Version.V1_12_2, 0x02));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInFlying.class, map(Version.V1_8, 0x03), map(Version.V1_12_2, 0x0C));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInFlying.PacketPlayInPosition.class, map(Version.V1_8, 0x04), map(Version.V1_12_2, 0x0D));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInFlying.PacketPlayInLook.class, map(Version.V1_8, 0x05), map(Version.V1_12_2, 0x0E));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInFlying.PacketPlayInPositionLook.class, map(Version.V1_8, 0x06), map(Version.V1_12_2, 0x0F));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInBlockDig.class, map(Version.V1_8, 0x07), map(Version.V1_12_2, 0x14));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInBlockPlace.class, map(Version.V1_8, 0x08), map(Version.V1_12_2, 0x20));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInHeldItemSlot.class, map(Version.V1_8, 0x09), map(Version.V1_12_2, 0x1A));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInArmAnimation.class, map(Version.V1_8, 0x0A), map(Version.V1_12_2, 0x1D));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInEntityAction.class, map(Version.V1_8, 0x0B), map(Version.V1_12_2, 0x15));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInCloseWindow.class, map(Version.V1_8, 0x0D), map(Version.V1_12_2, 0x08));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInWindowClick.class, map(Version.V1_8, 0x0E), map(Version.V1_12_2, 0x07));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInTransaction.class, map(Version.V1_8, 0x0F), map(Version.V1_12_2, 0x05));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInSetCreativeSlot.class, map(Version.V1_8, 0x10), map(Version.V1_12_2, 0x1B));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInTabComplete.class, map(Version.V1_8, 0x14), map(Version.V1_12_2, 0x01));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInSettings.class, map(Version.V1_8, 0x15), map(Version.V1_12_2, 0x04));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInClientCommand.class, map(Version.V1_8, 0x16), map(Version.V1_12_2, 0x03));
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInCustomPayload.class, map(Version.V1_8, 0x17), map(Version.V1_12_2, 0x09));
 
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketKeepAliveOut.class, map(Version.V1_8, 0x00), map(Version.V1_12_2, 0x1F));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketJoinGame.class, map(Version.V1_8, 0x01), map(Version.V1_12_2, 0x23));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketChat.class, map(Version.V1_8, 0x02), map(Version.V1_12_2, 0x0F));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketPlayerPosLook.class, map(Version.V1_8, 0x08), map(Version.V1_12_2, 0x2F));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketPlaySetSlot.class, map(Version.V1_8, 0x2F), map(Version.V1_12_2, 0x16));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketPlayMap.class, map(Version.V1_8, 0x34), map(Version.V1_12_2, 0x24));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketPlayerAbilitiesOut.class, map(Version.V1_8, 0x39), map(Version.V1_12_2, 0x2C));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketKickDisconnect.class, map(Version.V1_8, 0x40), map(Version.V1_12_2, 0x1A));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketTitle.class, map(Version.V1_8, 0x45), map(Version.V1_12_2, 0x48));
-        registerPacket(server, PacketDirection.OUT, ConnectionState.PLAY, PacketPlayerListHeaderFooter.class, map(Version.V1_8, 0x47), map(Version.V1_12_2, 0x4A));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutKeepAlive.class, map(Version.V1_8, 0x00), map(Version.V1_12_2, 0x1F));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutLogin.class, map(Version.V1_8, 0x01), map(Version.V1_12_2, 0x23));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutChat.class, map(Version.V1_8, 0x02), map(Version.V1_12_2, 0x0F));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutPosition.class, map(Version.V1_8, 0x08), map(Version.V1_12_2, 0x2F));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutSetSlot.class, map(Version.V1_8, 0x2F), map(Version.V1_12_2, 0x16));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutMap.class, map(Version.V1_8, 0x34), map(Version.V1_12_2, 0x24));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutAbilities.class, map(Version.V1_8, 0x39), map(Version.V1_12_2, 0x2C));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutKickDisconnect.class, map(Version.V1_8, 0x40), map(Version.V1_12_2, 0x1A));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutTitle.class, map(Version.V1_8, 0x45), map(Version.V1_12_2, 0x48));
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutPlayerListHeaderFooter.class, map(Version.V1_8, 0x47), map(Version.V1_12_2, 0x4A));
     }
 
     private void registerPacket(final LightSpigotServer server, final PacketDirection direction, final ConnectionState connectionState, final Class<? extends Packet> packet, final PacketMapping... mappings) {

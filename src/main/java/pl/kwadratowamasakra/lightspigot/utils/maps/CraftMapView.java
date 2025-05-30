@@ -1,6 +1,6 @@
 package pl.kwadratowamasakra.lightspigot.utils.maps;
 
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayMap;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutMap;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 import java.util.*;
@@ -98,7 +98,7 @@ public final class CraftMapView implements MapView {
             }
         }
 
-        final PacketPlayMap packet = new PacketPlayMap(getId(), getScale().getValue(), false, icons, data.buffer, 0, 0, 128, 128);
+        final PacketPlayOutMap packet = new PacketPlayOutMap(getId(), getScale().getValue(), false, icons, data.buffer, 0, 0, 128, 128);
         connection.sendPacket(packet);
     }
 

@@ -97,7 +97,8 @@ public class PluginManager {
                     server.getLogger().info(" [PLUGIN] " + pluginName + " has been loaded successfully!");
                 }
             }
-        } catch (final IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | ClassNotFoundException e) {
+        } catch (final IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                       InstantiationException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 

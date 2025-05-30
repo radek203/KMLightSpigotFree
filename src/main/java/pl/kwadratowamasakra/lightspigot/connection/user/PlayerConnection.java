@@ -10,7 +10,7 @@ import pl.kwadratowamasakra.lightspigot.connection.PacketLimiter;
 import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionDecoder;
 import pl.kwadratowamasakra.lightspigot.connection.handler.NettyCompressionEncoder;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketDisconnect;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutDisconnect;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.*;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
@@ -190,10 +190,10 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
             return;
         }
         if (connectionState == ConnectionState.PLAY) {
-            sendPacketAndClose(new PacketKickDisconnect(reason));
+            sendPacketAndClose(new PacketPlayOutKickDisconnect(reason));
             return;
         }
-        sendPacketAndClose(new PacketDisconnect(reason));
+        sendPacketAndClose(new PacketLoginOutDisconnect(reason));
     }
 
     /**
@@ -202,7 +202,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final void sendKeepAlive() {
         if (connectionState == ConnectionState.PLAY) {
-            sendPacket(new PacketKeepAliveOut((int) ThreadLocalRandom.current().nextLong()));
+            sendPacket(new PacketPlayOutKeepAlive((int) ThreadLocalRandom.current().nextLong()));
         }
     }
 
@@ -398,7 +398,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final void sendMessage(final String message) {
         if (message != null) {
-            sendPacket(new PacketChat(message, (byte) 1));
+            sendPacket(new PacketPlayOutChat(message, (byte) 1));
         }
     }
 
@@ -410,7 +410,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final void sendActionBar(final String message) {
         if (message != null) {
-            sendPacket(new PacketChat(message, (byte) 2));
+            sendPacket(new PacketPlayOutChat(message, (byte) 2));
         }
     }
 
@@ -422,7 +422,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final void sendTabHeaderFooter(final String header, final String footer) {
         if (header != null && footer != null) {
-            sendPacket(new PacketPlayerListHeaderFooter(header, footer));
+            sendPacket(new PacketPlayOutPlayerListHeaderFooter(header, footer));
         }
     }
 
@@ -446,9 +446,9 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      * @param stayOut  The time in ticks for the title to fade out.
      */
     public final void sendTitle(final String title, final String subTitle, final int fadeIn, final int stay, final int stayOut) {
-        writePacket(new PacketTitle(title == null ? "" : title, 0, 0, 0, PacketTitle.Type.TITLE));
-        writePacket(new PacketTitle(subTitle == null ? "" : subTitle, 0, 0, 0, PacketTitle.Type.SUBTITLE));
-        sendPacket(new PacketTitle(null, fadeIn, stay, stayOut, PacketTitle.Type.TIMES));
+        writePacket(new PacketPlayOutTitle(title == null ? "" : title, 0, 0, 0, PacketPlayOutTitle.Type.TITLE));
+        writePacket(new PacketPlayOutTitle(subTitle == null ? "" : subTitle, 0, 0, 0, PacketPlayOutTitle.Type.SUBTITLE));
+        sendPacket(new PacketPlayOutTitle(null, fadeIn, stay, stayOut, PacketPlayOutTitle.Type.TIMES));
     }
 
     /**
@@ -458,7 +458,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      * @param item The item to show.
      */
     public final void setItem(final int slot, final ItemStack item) {
-        sendPacket(new PacketPlaySetSlot(0, slot, item));
+        sendPacket(new PacketPlayOutSetSlot(0, slot, item));
     }
 
     /**

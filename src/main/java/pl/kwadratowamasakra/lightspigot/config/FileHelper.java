@@ -39,7 +39,7 @@ public class FileHelper {
     public final void saveFromJar(final String fileName, final File endFile) throws IOException {
         final JarFile jarFile = new JarFile(config.getJarPath());
         final JarEntry entry = jarFile.getJarEntry(fileName);
-        if (entry !=  null) {
+        if (entry != null) {
             final InputStream is = jarFile.getInputStream(entry);
             final OutputStream os = new FileOutputStream(endFile);
             is.transferTo(os);
