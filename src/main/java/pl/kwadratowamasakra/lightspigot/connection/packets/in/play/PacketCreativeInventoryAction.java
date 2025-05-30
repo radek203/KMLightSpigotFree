@@ -31,6 +31,6 @@ public class PacketCreativeInventoryAction extends PacketIn {
 
     @Override
     public final int getLimit() {
-        return 3;
+        return 5;
     }
 }
