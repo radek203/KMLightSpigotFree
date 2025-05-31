@@ -36,6 +36,6 @@ public class PacketPlayInBlockDig extends PacketIn {
         DROP_ALL_ITEMS,
         DROP_ITEM,
         RELEASE_USE_ITEM,
-        SWAP_HELD_ITEMS //1.9.x
+        SWAP_HELD_ITEMS //1.9.x,1.10.x
     }
 }

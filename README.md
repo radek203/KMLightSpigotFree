@@ -9,7 +9,7 @@ This server is built to handle thousands of players all in one server, Initially
 
 It's crafted as a lightweight server, designed for handling tasks like logging in, verifying accounts, and more, without the overhead of managing worlds, etc.
 
-Specifically designed for players playing Minecraft version 1.8.x and 1.12.2, it also lets you make custom plugins with custom commands and listeners.
+Specifically designed for players playing Minecraft version 1.8.x, 1.9.x, 1.10.x and 1.12.2, it also lets you make custom plugins with custom commands and listeners.
 
 ## How to run (Linux)
 
