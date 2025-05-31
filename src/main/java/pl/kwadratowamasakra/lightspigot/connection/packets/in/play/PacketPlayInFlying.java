@@ -13,13 +13,13 @@ public class PacketPlayInFlying extends PacketIn {
     private double z;
     private float yaw;
     private float pitch;
-    //protected boolean onGround;
+    protected boolean onGround;
     //protected boolean moving;
     //protected boolean rotating;
 
     @Override
     public void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
-
+        onGround = packetBuffer.readUnsignedByte() != 0;
     }
 
     @Override

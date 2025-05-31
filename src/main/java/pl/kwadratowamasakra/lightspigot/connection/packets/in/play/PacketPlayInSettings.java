@@ -20,7 +20,11 @@ public class PacketPlayInSettings extends PacketIn {
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         lang = packetBuffer.readString(packetBuffer.readVarInt());
         view = packetBuffer.readByte();
-        chatVisibility = packetBuffer.readByte();
+        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
+            chatVisibility = packetBuffer.readVarInt();
+        } else {
+            chatVisibility = packetBuffer.readByte();
+        }
         enableColors = packetBuffer.readBoolean();
         modelPartFlags = packetBuffer.readUnsignedByte();
         if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {

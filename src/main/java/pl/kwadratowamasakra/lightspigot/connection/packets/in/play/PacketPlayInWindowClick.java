@@ -15,8 +15,7 @@ public class PacketPlayInWindowClick extends PacketIn {
     private int usedButton;
     private short actionNumber;
     private ItemStack item;
-    private short clickedItem;
-    private int mode;
+    private int shift;
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
@@ -24,12 +23,12 @@ public class PacketPlayInWindowClick extends PacketIn {
         slotId = packetBuffer.readShort();
         usedButton = packetBuffer.readByte();
         actionNumber = packetBuffer.readShort();
-        mode = packetBuffer.readByte();
-        if (connection.getVersion().isEqualOrHigher(Version.V1_12_2)) {
-            item = packetBuffer.readItemStack();
+        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
+            shift = packetBuffer.readVarInt();
         } else {
-            clickedItem = packetBuffer.readShort();
+            shift = packetBuffer.readByte();
         }
+        item = packetBuffer.readItemStack();
     }
 
     @Override

@@ -46,7 +46,7 @@ public class PacketPlayOutMap extends PacketOut {
     public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeVarInt(mapId);
         packetBuffer.writeByte(scale);
-        if (connection.getVersion().isEqualOrHigher(Version.V1_12_2)) {
+        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
             packetBuffer.writeBoolean(track);
         }
         packetBuffer.writeVarInt(icons.length);

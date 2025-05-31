@@ -28,6 +28,6 @@ public class PacketPlayInClientCommand extends PacketIn {
     public enum EnumState {
         PERFORM_RESPAWN,
         REQUEST_STATS,
-        OPEN_INVENTORY_ACHIEVEMENT //1.8
+        OPEN_INVENTORY_ACHIEVEMENT //1.8-1.9.3
     }
 }

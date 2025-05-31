@@ -12,6 +12,7 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 public class PacketPlayOutLogin extends PacketOut {
 
     private int entityId;
+    //private boolean hardcore;
     private int gameMode;
     private int dimension;
     private int difficulty;
@@ -22,6 +23,13 @@ public class PacketPlayOutLogin extends PacketOut {
     @Override
     public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeInt(entityId);
+
+        /*
+        if (hardcore) {
+            gameMode |= 8;
+        }
+         */
+
         packetBuffer.writeByte(gameMode);
         if (connection.getVersion().isInRange(Version.V1_8, Version.V1_9)) {
             packetBuffer.writeByte(dimension);

@@ -12,16 +12,11 @@ public class PacketPlayInSetCreativeSlot extends PacketIn {
 
     private int slotId;
     private ItemStack item;
-    private short stack;
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         slotId = packetBuffer.readShort();
-        if (connection.getVersion().isEqualOrHigher(Version.V1_12_2)) {
-            item = packetBuffer.readItemStack();
-        } else {
-            stack = packetBuffer.readShort();
-        }
+        item = packetBuffer.readItemStack();
     }
 
     @Override
