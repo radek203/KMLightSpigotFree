@@ -125,7 +125,7 @@ public class PacketManager {
      */
     private void registerPacket(final LightSpigotServer server, final PacketDirection direction, final ConnectionState connectionState, final Version version, final int packetId, final Class<? extends Packet> packet) {
         if (containsPacketId(direction, version, connectionState, packetId)) {
-            server.getLogger().error("PacketManager.registerPacket(...) error", "PacketID is already in use (" + packetId + ", " + packet.getName() + ", " + version + ")");
+            server.getLogger().error("PacketManager.registerPacket(...) error", "PacketID is already in use (" + packetId + ", " + packet.getSimpleName() + ", " + version + ")");
             return;
         }
         try {
@@ -135,7 +135,7 @@ public class PacketManager {
                     .computeIfAbsent(connectionState, k -> new HashMap<>())
                     .put(packetId, registeredPacket);
         } catch (final NoSuchMethodException e) {
-            server.getLogger().error("PacketManager.registerPacket(...) error", "Failed to register packet (" + packetId + ")\n" + e.getMessage());
+            server.getLogger().error("PacketManager.registerPacket(...) error", "Failed to register packet (" + packetId + ", " + packet.getSimpleName() + ", " + version + ")\n" + e.getMessage());
         }
     }
 
