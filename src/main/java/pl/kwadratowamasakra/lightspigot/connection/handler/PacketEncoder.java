@@ -46,9 +46,9 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
      * @param byteBuf        The ByteBuf to which the encoded packet is written.
      */
     protected final void encode(final ChannelHandlerContext handlerContext, final Packet packet, final ByteBuf byteBuf) {
-        final int packetId = packetManager.getPacketId(PacketDirection.OUT, connection.getVersion(), packet.getClass());
+        final int packetId = packetManager.getPacketId(PacketDirection.CLIENTBOUND, connection.getVersion(), packet.getClass());
         if (packetId < 0) {
-            server.getLogger().error("PacketEncoder error", "Returned PacketId by registry is < 0 (" + packetId + ")");
+            server.getLogger().error("PacketEncoder error", "Returned PacketId by registry is < 0 (" + packetId + ", " + packet.getClass().getSimpleName() + ", " + connection.getVersion() +")");
             return;
         }
 
