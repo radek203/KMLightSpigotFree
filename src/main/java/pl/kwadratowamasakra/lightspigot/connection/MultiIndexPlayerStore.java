@@ -2,7 +2,10 @@ package pl.kwadratowamasakra.lightspigot.connection;
 
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
@@ -21,7 +24,7 @@ public class MultiIndexPlayerStore {
         try {
             players.add(item);
             byName.put(item.getName(), item);
-            byNameLowerCase.put(item.getName(), item);
+            byNameLowerCase.put(item.getNameLowerCase(), item);
             byIp.computeIfAbsent(item.getIp(), k -> new ArrayList<>()).add(item);
         } finally {
             writeLock.unlock();
@@ -63,7 +66,7 @@ public class MultiIndexPlayerStore {
     public PlayerConnection getByNameLowerCase(String nameLower) {
         readLock.lock();
         try {
-            return byNameLowerCase.get(nameLower);
+            return byNameLowerCase.get(nameLower.toLowerCase());
         } finally {
             readLock.unlock();
         }

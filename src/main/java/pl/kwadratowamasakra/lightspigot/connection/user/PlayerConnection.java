@@ -324,7 +324,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      */
     public final String getNameLowerCase() {
         if (gameProfile != null) {
-            return gameProfile.getName().toLowerCase(Locale.ROOT);
+            return gameProfile.getName().toLowerCase();
         }
         return null;
     }
