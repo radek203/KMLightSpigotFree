@@ -77,8 +77,8 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
             }
         }
 
-        if (connection.tryAcceptGlobalPacket(server.getConfig().getPacketCountReset(), server.getConfig().getMaxPacketCount())) {
-            throw new DecoderException("PacketCount > " + server.getConfig().getMaxPacketCount());
+        if (connection.tryAcceptGlobalPacket(server.getConfig().getPacketCountReset(), server.getConfig().getPacketCountMax())) {
+            throw new DecoderException("PacketCount > " + server.getConfig().getPacketCountMax());
         }
 
         final PacketBuffer buffer = new PacketBuffer(byteBuf);

@@ -108,7 +108,4 @@ public enum Version {
         return versionMin.getProtocolNumber() <= protocolNumber && versionMax.getProtocolNumber() >= protocolNumber;
     }
 
-    public boolean isSupported() {
-        return this != UNDEFINED;
-    }
 }

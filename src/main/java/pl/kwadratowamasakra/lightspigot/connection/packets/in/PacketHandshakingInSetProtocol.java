@@ -34,8 +34,8 @@ public class PacketHandshakingInSetProtocol extends PacketIn {
         connection.setVersion(Version.of(version));
 
         if (nextState == 2) {
-            final boolean versionSupported = connection.getVersion().isSupported();
-            final PlayerHandshakeEvent e = new PlayerHandshakeEvent(connection, versionSupported, versionSupported ? null : ChatUtil.fixColor(server.getConfig().getBadVersion()));
+            final boolean versionSupported = isPlayerVersionSupported(connection, server);
+            final PlayerHandshakeEvent e = new PlayerHandshakeEvent(connection, versionSupported, versionSupported ? null : ChatUtil.fixColor(server.getConfig().getUnsupportedVersionMessage()));
             server.getEventManager().handleEvent(e);
             if (!e.isAccepted()) {
                 connection.disconnect(e.getReason());
@@ -54,6 +54,10 @@ public class PacketHandshakingInSetProtocol extends PacketIn {
     @Override
     public final int getLimit() {
         return 3;
+    }
+
+    private boolean isPlayerVersionSupported(final PlayerConnection connection, final LightSpigotServer server) {
+        return connection.getVersion().getProtocolNumber() >= server.getConfig().getMinVersion() && connection.getVersion().getProtocolNumber() <= server.getConfig().getMaxVersion();
     }
 
 }

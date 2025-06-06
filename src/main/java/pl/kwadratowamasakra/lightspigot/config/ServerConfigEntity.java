@@ -11,7 +11,6 @@ public class ServerConfigEntity implements FileProviderEntity {
     private final List<String> ops;
     private final String hostname;
     private final int port;
-    private final String badVersion;
     private final List<String> blockedNames;
     private final String badNameLength;
     private final String badNameChars;
@@ -22,8 +21,11 @@ public class ServerConfigEntity implements FileProviderEntity {
     private final long keepAliveBroadcast;
     private final String motdVersion;
     private final String motdDescription;
-    private final int maxPacketCount;
+    private final int packetCountMax;
     private final long packetCountReset;
+    private final int minVersion;
+    private final int maxVersion;
+    private final String unsupportedVersionMessage;
     private final int maxPlayers;
     private final int networkThreshold;
     private final boolean proxyEnabled;
@@ -54,7 +56,6 @@ public class ServerConfigEntity implements FileProviderEntity {
         port = configuration.getInt("server.port");
         ops = configuration.getStringList("server.ops");
 
-        badVersion = configuration.getString("checks.badVersion");
         blockedNames = configuration.getStringList("checks.blockedNames");
         badNameLength = configuration.getString("checks.badNameLength");
         badNameChars = configuration.getString("checks.badNameChars");
@@ -66,8 +67,12 @@ public class ServerConfigEntity implements FileProviderEntity {
         proxyEnabled = configuration.getBoolean("network.proxy.enabled");
         proxyList = configuration.getStringList("network.proxy.ips");
 
+        minVersion = configuration.getInt("network.version.min");
+        maxVersion = configuration.getInt("network.version.max");
+        unsupportedVersionMessage = configuration.getString("network.version.message");
+
         playerOnServer = configuration.getString("network.playerOnServer");
-        maxPacketCount = configuration.getInt("network.packets.count");
+        packetCountMax = configuration.getInt("network.packets.count");
         packetCountReset = configuration.getInt("network.packets.time");
         defaultGamemode = configuration.getInt("network.defaultGamemode");
         defaultDimension = configuration.getInt("network.defaultDimension");
@@ -96,10 +101,6 @@ public class ServerConfigEntity implements FileProviderEntity {
 
     public final int getPort() {
         return port;
-    }
-
-    public final String getBadVersion() {
-        return badVersion;
     }
 
     public final List<String> getBlockedNames() {
@@ -142,12 +143,24 @@ public class ServerConfigEntity implements FileProviderEntity {
         return motdDescription;
     }
 
-    public final int getMaxPacketCount() {
-        return maxPacketCount;
+    public final int getPacketCountMax() {
+        return packetCountMax;
     }
 
     public final long getPacketCountReset() {
         return packetCountReset;
+    }
+
+    public final int getMinVersion() {
+        return minVersion;
+    }
+
+    public final int getMaxVersion() {
+        return maxVersion;
+    }
+
+    public final String getUnsupportedVersionMessage() {
+        return unsupportedVersionMessage;
     }
 
     public final int getMaxPlayers() {
