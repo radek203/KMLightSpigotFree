@@ -19,7 +19,9 @@ import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -28,8 +30,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class PlayerConnection extends ChannelInboundHandlerAdapter implements CommandSender {
 
-    private final List<Long> packetsCounter = new ArrayList<>();
-    private final Map<Class<? extends PacketIn>, PacketLimiter> packetsIndividualCounter = new HashMap<>();
+    private final PacketLimiter globalPacketLimiter = new PacketLimiter();
+    private final Map<Class<? extends PacketIn>, PacketLimiter> individualPacketLimiters = new HashMap<>();
 
     private final Channel channel;
     private final LightSpigotServer server;
@@ -366,42 +368,27 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
 
     /**
      * Adds the current time to the packets counter and removes times that are older than the reset time.
-     * It returns the size of the packets counter.
+     * It returns true if limit is exceeded, false otherwise.
      * It is general for all packets. It is not specific to any packet.
      *
      * @param resetTime The reset time.
-     * @return The size of the packets counter.
+     * @return True if the limit is exceeded, false otherwise.
      */
-    public final int addAndGetPacketsCount(final long resetTime) {
-        final long time = System.currentTimeMillis();
-        packetsCounter.add(time);
-        packetsCounter.removeIf(aLong -> aLong + resetTime < time);
-        return packetsCounter.size();
+    public final boolean tryAcceptGlobalPacket(final long resetTime, final int limit) {
+        return globalPacketLimiter.addAndGetPacketsCount(resetTime) > limit;
     }
 
     /**
      * Adds the current time to the packets counter for the specified packet and removes times that are older than the reset time.
-     * It returns the size of the packets counter for the packet.
+     * It returns true if limit is exceeded, false otherwise.
      *
      * @param resetTime The reset time.
      * @param packet    The packet to count.
-     * @return The size of the packets counter for the packet.
+     * @return True if the limit is exceeded, false otherwise.
      */
-    public final int addAndGetPacketsCount(final long resetTime, final Class<? extends PacketIn> packet) {
-        final PacketLimiter packetLimiter = getPacketCounterByPacket(packet);
-        return packetLimiter.addAndGetPacketsCount(resetTime);
-    }
-
-    /**
-     * Returns the packet limiter for the specified packet.
-     * If a packet limiter for the packet exists in the packets individual counter, it returns the packet limiter.
-     * Otherwise, it creates a new packet limiter for the packet, adds it to the packets individual counter, and returns the packet limiter.
-     *
-     * @param packet The packet to get the packet limiter for.
-     * @return The packet limiter for the packet.
-     */
-    private PacketLimiter getPacketCounterByPacket(final Class<? extends PacketIn> packet) {
-        return packetsIndividualCounter.computeIfAbsent(packet, p -> new PacketLimiter(packet));
+    public final boolean tryAcceptPacket(final long resetTime, final Class<? extends PacketIn> packet, final int limit) {
+        final PacketLimiter packetLimiter = individualPacketLimiters.computeIfAbsent(packet, p -> new PacketLimiter());
+        return packetLimiter.addAndGetPacketsCount(resetTime) > limit;
     }
 
     /**

@@ -30,6 +30,7 @@ import java.util.Map;
 public class PacketManager {
 
     private final Map<PacketDirection, Map<Version, Map<ConnectionState, Map<Integer, RegisteredPacket>>>> packets = new EnumMap<>(PacketDirection.class);
+    private final Map<PacketDirection, Map<Version, Map<Class<? extends Packet>, Integer>>> packetClassToId = new EnumMap<>(PacketDirection.class);
 
     private static PacketMapping map(final int packetId) {
         return new PacketMapping(Version.values(), packetId);
@@ -188,6 +189,11 @@ public class PacketManager {
                     .computeIfAbsent(version, k -> new EnumMap<>(ConnectionState.class))
                     .computeIfAbsent(connectionState, k -> new HashMap<>())
                     .put(packetId, registeredPacket);
+
+            packetClassToId
+                    .computeIfAbsent(direction, k -> new EnumMap<>(Version.class))
+                    .computeIfAbsent(version, k -> new HashMap<>())
+                    .put(packet, packetId);
         } catch (final NoSuchMethodException e) {
             server.getLogger().error("PacketManager.registerPacket(...) error", "Failed to register packet (" + packetId + ", " + packet.getSimpleName() + ", " + version + ")\n" + e.getMessage());
         }
@@ -201,14 +207,7 @@ public class PacketManager {
      * @return The ID of the packet.
      */
     public final int getPacketId(final PacketDirection direction, final Version version, final Class<? extends Packet> packetClass) {
-        for (final Map.Entry<ConnectionState, Map<Integer, RegisteredPacket>> it : packets.get(direction).get(version).entrySet()) {
-            for (final Map.Entry<Integer, RegisteredPacket> its : it.getValue().entrySet()) {
-                if (its.getValue().getPacketClass().equals(packetClass)) {
-                    return its.getKey();
-                }
-            }
-        }
-        return -1;
+        return packetClassToId.getOrDefault(direction, Map.of()).getOrDefault(version, Map.of()).getOrDefault(packetClass, -1);
     }
 
     /**

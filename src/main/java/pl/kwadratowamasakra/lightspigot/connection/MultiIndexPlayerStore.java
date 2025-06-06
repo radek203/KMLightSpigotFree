@@ -93,9 +93,7 @@ public class MultiIndexPlayerStore {
     public void doActionOnAll(Consumer<PlayerConnection> action) {
         readLock.lock();
         try {
-            for (PlayerConnection connection : players) {
-                action.accept(connection);
-            }
+            players.forEach(action);
         } finally {
             readLock.unlock();
         }

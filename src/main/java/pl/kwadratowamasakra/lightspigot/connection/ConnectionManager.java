@@ -7,8 +7,8 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,7 +20,7 @@ public class ConnectionManager {
     private final LightSpigotServer server;
     private final MultiIndexPlayerStore connections = new MultiIndexPlayerStore();
     private final Map<String, Integer> suspectedConnections = new ConcurrentHashMap<>();
-    private final List<String> serverOperators = new CopyOnWriteArrayList<>();
+    private final Set<String> serverOperators = ConcurrentHashMap.newKeySet();
     private final AtomicInteger onlinePlayers = new AtomicInteger(0);
 
     /**
@@ -199,9 +199,7 @@ public class ConnectionManager {
      * @param name The name of the player to add.
      */
     public final void addOp(final String name) {
-        if (!serverOperators.contains(name)) {
-            serverOperators.add(name);
-        }
+        serverOperators.add(name);
     }
 
     /**

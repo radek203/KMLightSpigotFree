@@ -160,9 +160,7 @@ public class PluginManager {
      */
     private void stopPluginRunnables() {
         scheduler.shutdown();
-        for (final PluginRunnable runnable : runnables) {
-            runnable.cancelTask();
-        }
+        runnables.forEach(PluginRunnable::cancelTask);
         runnables.clear();
     }
 

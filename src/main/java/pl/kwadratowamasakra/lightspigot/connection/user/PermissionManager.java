@@ -1,7 +1,7 @@
 package pl.kwadratowamasakra.lightspigot.connection.user;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The PermissionManager class manages the permissions of a user.
@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class PermissionManager {
 
-    private final List<String> permissions = new ArrayList<>();
+    private final Set<String> permissions = new HashSet<>();
 
     /**
      * Adds a permission to the list of permissions.
@@ -18,9 +18,7 @@ public class PermissionManager {
      * @param permission The permission to add.
      */
     public final void addPermission(final String permission) {
-        if (!permissions.contains(permission)) {
-            permissions.add(permission);
-        }
+        permissions.add(permission);
     }
 
     /**
