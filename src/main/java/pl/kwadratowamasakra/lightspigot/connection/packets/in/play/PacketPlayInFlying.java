@@ -8,12 +8,12 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 public class PacketPlayInFlying extends PacketIn {
 
+    protected boolean onGround;
     private double x;
     private double y;
     private double z;
     private float yaw;
     private float pitch;
-    protected boolean onGround;
     //protected boolean moving;
     //protected boolean rotating;
 

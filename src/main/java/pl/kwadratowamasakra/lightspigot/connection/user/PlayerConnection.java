@@ -316,6 +316,20 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
     }
 
     /**
+     * Returns the name of the player in lowercase.
+     * If the game profile is not null, it returns the name of the game profile in lowercase.
+     * Otherwise, it returns null.
+     *
+     * @return The name of the player in lowercase.
+     */
+    public final String getNameLowerCase() {
+        if (gameProfile != null) {
+            return gameProfile.getName().toLowerCase(Locale.ROOT);
+        }
+        return null;
+    }
+
+    /**
      * Returns the UUID of the player as a string.
      * If the game profile is not null, it returns the UUID of the game profile as a string.
      * Otherwise, it returns "NULL".

@@ -1,7 +1,6 @@
 package pl.kwadratowamasakra.lightspigot;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
@@ -22,7 +21,6 @@ import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 import pl.kwadratowamasakra.lightspigot.utils.ServerLogger;
 
-import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -30,7 +28,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CompletionException;
 
 /**
  * The LightSpigotServer class represents the main server class for the LightSpigot server.
