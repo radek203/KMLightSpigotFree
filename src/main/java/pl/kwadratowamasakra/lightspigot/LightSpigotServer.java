@@ -10,7 +10,7 @@ import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import pl.kwadratowamasakra.lightspigot.command.CommandManager;
-import pl.kwadratowamasakra.lightspigot.config.ServerConfig;
+import pl.kwadratowamasakra.lightspigot.config.ServerConfigEntity;
 import pl.kwadratowamasakra.lightspigot.connection.ClientChannelInitializer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionManager;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketManager;
@@ -41,8 +41,8 @@ public class LightSpigotServer {
     private final EventManager eventManager = new EventManager();
     private final PluginManager pluginManager = new PluginManager();
 
-    private ServerLogger logger;
-    private ServerConfig config;
+    private final ServerLogger logger;
+    private final ServerConfigEntity config;
     private Timer keepAliveTask;
     private ConsoleHandler console;
     private EventLoopGroup bossGroup;
@@ -58,12 +58,7 @@ public class LightSpigotServer {
     LightSpigotServer() {
         connectionManager = new ConnectionManager(this);
 
-        try {
-            config = new ServerConfig(this);
-        } catch (final RuntimeException e) {
-            e.printStackTrace();
-            return;
-        }
+        config = new ServerConfigEntity(this);
         logger = new ServerLogger(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSSS"), ZoneId.of(config.getTimeZone()), config.isDebugOn());
         logger.startLoggerThread();
 
@@ -137,7 +132,7 @@ public class LightSpigotServer {
     public final void stop() {
         setClosing(true);
         console.stopThread();
-        pluginManager.disablePlugins();
+        pluginManager.disablePlugins(this);
         logger.info(ConsoleColors.GREEN_BRIGHT + "Stopping server..." + ConsoleColors.RESET);
 
         final String reason = ChatUtil.fixColor(config.getRestart());
@@ -192,7 +187,7 @@ public class LightSpigotServer {
     /**
      * @return The server configuration.
      */
-    public final ServerConfig getConfig() {
+    public final ServerConfigEntity getConfig() {
         return config;
     }
 

@@ -1,26 +1,16 @@
 package pl.kwadratowamasakra.lightspigot.config;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
  * This class is a modified version of the ConfigurationProvider class from the BungeeCord project (https://github.com/SpigotMC/BungeeCord/blob/master/config/src/main/java/net/md_5/bungee/config/)
  */
 public abstract class ConfigurationProvider {
 
-    private static final Map<Class<? extends ConfigurationProvider>, ConfigurationProvider> providers = new HashMap<>();
+    private static final ConfigurationProvider YAML_PROVIDER = new YamlConfiguration();
 
-    static {
-        try {
-            providers.put(YamlConfiguration.class, new YamlConfiguration());
-        } catch (final NoClassDefFoundError ex) {
-            // Ignore, no SnakeYAML
-        }
-    }
-
-    public static ConfigurationProvider getProvider(final Class<? extends ConfigurationProvider> provider) {
-        return providers.get(provider);
+    public static ConfigurationProvider getYamlProvider() {
+        return YAML_PROVIDER;
     }
 
     /*------------------------------------------------------------------------*/

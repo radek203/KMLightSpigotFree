@@ -1,9 +1,9 @@
 package pl.kwadratowamasakra.lightspigot.plugin;
 
-import pl.kwadratowamasakra.lightspigot.config.Config;
-import pl.kwadratowamasakra.lightspigot.config.ConfigHelper;
 import pl.kwadratowamasakra.lightspigot.config.Configuration;
 import pl.kwadratowamasakra.lightspigot.config.FileHelper;
+import pl.kwadratowamasakra.lightspigot.config.FileProviderEntity;
+import pl.kwadratowamasakra.lightspigot.config.PluginFileHelper;
 
 import java.lang.reflect.Method;
 
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * The Plugin class represents a plugin in the system.
  * It includes methods to get the enable and disable methods, the instance of the plugin, and the configuration of the plugin.
  */
-public class Plugin implements Config {
+public class Plugin implements FileProviderEntity {
 
     private final String name;
     private final String jarPath;
@@ -37,8 +37,8 @@ public class Plugin implements Config {
         this.methodDisable = methodDisable;
         this.instance = instance;
 
-        config = new ConfigHelper(this, true).createConfig();
-        fileHelper = new FileHelper(this, true);
+        fileHelper = new PluginFileHelper(this);
+        config = createConfig(fileHelper);
     }
 
     /**

@@ -4,7 +4,7 @@ import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 
 import java.util.List;
 
-public class ServerConfig implements Config {
+public class ServerConfigEntity implements FileProviderEntity {
 
     private final LightSpigotServer server;
     private final List<String> proxyList;
@@ -44,12 +44,10 @@ public class ServerConfig implements Config {
      * @param server The LightSpigotServer object.
      * @throws RuntimeException If the configuration file cannot be created.
      */
-    public ServerConfig(final LightSpigotServer server) {
+    public ServerConfigEntity(final LightSpigotServer server) {
         this.server = server;
-        final Configuration configuration = new ConfigHelper(this, false).createConfig();
-        if (configuration == null) {
-            throw new RuntimeException("Cannot create configuration file!");
-        }
+        final FileHelper fileHelper = new ServerFileHelper(this);
+        final Configuration configuration = createConfig(fileHelper);
         debugOn = configuration.getBoolean("debug");
         timeZone = configuration.getString("timeZone");
         hostname = configuration.getString("server.hostname");

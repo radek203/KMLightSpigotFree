@@ -99,7 +99,7 @@ public class PluginManager {
             }
         } catch (final IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                        InstantiationException | ClassNotFoundException e) {
-            e.printStackTrace();
+            server.getLogger().error("An error occurred while loading plugins.", e.getMessage());
         }
 
     }
@@ -107,7 +107,7 @@ public class PluginManager {
     /**
      * Disables all the plugins.
      */
-    public final void disablePlugins() {
+    public final void disablePlugins(final LightSpigotServer server) {
         stopPluginRunnables();
 
         try {
@@ -117,7 +117,7 @@ public class PluginManager {
                 }
             }
         } catch (final IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            server.getLogger().error("An error occurred while disabling plugins.", e.getMessage());
         }
 
     }

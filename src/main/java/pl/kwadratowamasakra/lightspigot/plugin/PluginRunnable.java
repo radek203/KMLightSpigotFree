@@ -71,7 +71,7 @@ public class PluginRunnable {
      * Cancels the task.
      * This stops the task from running in the future.
      */
-    public final void cancelTask() {
+    final void cancelTask() {
         scheduledFuture.cancel(true);
     }
 
