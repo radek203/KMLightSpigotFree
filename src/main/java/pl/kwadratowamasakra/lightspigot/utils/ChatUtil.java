@@ -34,9 +34,8 @@ public class ChatUtil {
 
         final int length = chars.length;
         for (int i = 0; i < length - 1; ++i) {
-            if (chars[i] == '&' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(chars[i + 1]) > -1) {
+            if (chars[i] == '&' && "0123456789abcdefklmnorx".indexOf(chars[i + 1]) > -1) {
                 chars[i] = 167;
-                chars[i + 1] = Character.toLowerCase(chars[i + 1]);
             }
         }
 

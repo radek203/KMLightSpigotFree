@@ -94,7 +94,7 @@ public class PluginManager {
                     methodEnable.invoke(instance, server, plugin.getConfig(), plugin.getFileHelper());
                     jf.close();
 
-                    server.getLogger().info(" [PLUGIN] " + pluginName + " has been loaded successfully!");
+                    server.getLogger().info("[PLUGIN] " + pluginName + " has been loaded successfully!");
                 }
             }
         } catch (final IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |

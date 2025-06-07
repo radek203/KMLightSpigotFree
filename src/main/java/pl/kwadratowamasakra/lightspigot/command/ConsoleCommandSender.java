@@ -1,7 +1,6 @@
 package pl.kwadratowamasakra.lightspigot.command;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
-import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 
 public class ConsoleCommandSender implements CommandSender {
 
@@ -13,7 +12,7 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public final String getNameString() {
-        return ConsoleColors.WHITE_BOLD_BRIGHT + "CONSOLE" + ConsoleColors.RESET;
+        return "CONSOLE";
     }
 
     @Override

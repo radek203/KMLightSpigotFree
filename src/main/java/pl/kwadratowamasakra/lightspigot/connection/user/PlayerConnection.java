@@ -15,7 +15,6 @@ import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.*;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketOut;
 import pl.kwadratowamasakra.lightspigot.event.PlayerQuitEvent;
-import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 import java.net.InetSocketAddress;
@@ -66,7 +65,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
             final PlayerQuitEvent event = new PlayerQuitEvent(this);
             server.getEventManager().handleEvent(event);
 
-            server.getLogger().connection(ConsoleColors.CYAN + "Disconnected" + ConsoleColors.RESET + " username: " + getName() + " uuid: " + getUUID());
+            server.getLogger().connection("Disconnected", "username: " + getName() + " uuid: " + getUUID());
         }
         server.getConnectionManager().removeConnection(this);
         closeConnection();

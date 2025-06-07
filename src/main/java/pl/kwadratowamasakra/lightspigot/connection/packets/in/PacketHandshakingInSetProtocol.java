@@ -8,7 +8,6 @@ import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.event.PlayerHandshakeEvent;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
-import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 
 public class PacketHandshakingInSetProtocol extends PacketIn {
 
@@ -47,7 +46,7 @@ public class PacketHandshakingInSetProtocol extends PacketIn {
                 return;
             }
         }
-        server.getLogger().connection(ConsoleColors.CYAN + "PacketHandshake" + ConsoleColors.RESET + " Client: " + connection.getIp() + " Version: " + connection.getVersion() + " State: " + nextState);
+        server.getLogger().connection("PacketHandshaking", "Client: " + connection.getIp() + " Version: " + connection.getVersion() + " State: " + nextState);
         connection.setConnectionState(nextState == 1 ? ConnectionState.STATUS : ConnectionState.LOGIN);
     }
 

@@ -16,7 +16,6 @@ import pl.kwadratowamasakra.lightspigot.event.Location;
 import pl.kwadratowamasakra.lightspigot.event.PlayerLoginEvent;
 import pl.kwadratowamasakra.lightspigot.event.PlayerPreLoginEvent;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
-import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 import pl.kwadratowamasakra.lightspigot.utils.UUIDUtil;
 
 import java.util.UUID;
@@ -69,7 +68,7 @@ public class PacketLoginInStart extends PacketIn {
             connection.disconnect(e.getReason());
             return;
         }
-        server.getLogger().connection(ConsoleColors.CYAN + "PacketLoginStart" + ConsoleColors.RESET + " username: " + username + " uuid: " + uuid);
+        server.getLogger().connection("PacketLoginInStart", "username: " + username + " uuid: " + uuid);
 
         if (server.getConfig().getNetworkThreshold() > 0) {
             connection.sendPacket(new PacketLoginOutSetCompression(server.getConfig().getNetworkThreshold()), (ChannelFutureListener) future -> connection.setCompressionThreshold(server.getConfig().getNetworkThreshold()));

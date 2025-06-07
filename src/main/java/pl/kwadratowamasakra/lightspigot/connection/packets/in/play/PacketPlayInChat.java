@@ -7,7 +7,6 @@ import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.event.PlayerChatEvent;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
-import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
 
 public class PacketPlayInChat extends PacketIn {
 
@@ -34,7 +33,7 @@ public class PacketPlayInChat extends PacketIn {
         server.getEventManager().handleEvent(e);
 
         if (e.isAccepted()) {
-            server.getLogger().info(ConsoleColors.WHITE_BOLD_BRIGHT + "[CHAT] " + ConsoleColors.RESET + e.getMessage());
+            server.getLogger().info("[CHAT] " + e.getMessage());
             server.getConnectionManager().broadcastMessage(e.getMessage());
         } else {
             connection.sendMessage(e.getReason());

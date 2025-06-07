@@ -18,14 +18,13 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.event.EventManager;
 import pl.kwadratowamasakra.lightspigot.plugin.PluginManager;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
-import pl.kwadratowamasakra.lightspigot.utils.ConsoleColors;
-import pl.kwadratowamasakra.lightspigot.utils.ServerLogger;
+import pl.kwadratowamasakra.lightspigot.utils.logger.ServerLogger;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,8 +58,8 @@ public class LightSpigotServer {
         connectionManager = new ConnectionManager(this);
 
         config = new ServerConfigEntity(this);
-        logger = new ServerLogger(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSSS"), ZoneId.of(config.getTimeZone()), config.isDebugOn());
-        logger.startLoggerThread();
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of(config.getTimeZone())));
+        logger = new ServerLogger(config.isDebugOn());
 
         packetManager.registerPackets(this);
     }
@@ -89,7 +88,7 @@ public class LightSpigotServer {
         console = new ConsoleHandler(this);
         console.startConsoleThread();
 
-        logger.info(ConsoleColors.GREEN_BRIGHT + "The server has started!" + ConsoleColors.RESET);
+        logger.success("The server has started!");
     }
 
     /**
@@ -133,7 +132,7 @@ public class LightSpigotServer {
         setClosing(true);
         console.stopThread();
         pluginManager.disablePlugins(this);
-        logger.info(ConsoleColors.GREEN_BRIGHT + "Stopping server..." + ConsoleColors.RESET);
+        logger.success("Stopping server...");
 
         final String reason = ChatUtil.fixColor(config.getRestart());
         for (final PlayerConnection connection : connectionManager.getConnections()) {
@@ -145,8 +144,7 @@ public class LightSpigotServer {
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 
-        logger.info(ConsoleColors.GREEN_BRIGHT + "Server stopped!" + ConsoleColors.RESET);
-        logger.stop();
+        logger.success("Server stopped!");
     }
 
     /**
