@@ -2,6 +2,7 @@ package pl.kwadratowamasakra.lightspigot.connection.packets.in.login;
 
 import io.netty.channel.ChannelFutureListener;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
+import pl.kwadratowamasakra.lightspigot.connection.ConnectionManager;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutSetCompression;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutSuccess;
@@ -56,8 +57,13 @@ public class PacketLoginInStart extends PacketIn {
             connection.closeConnection();
             return;
         }
-        if (server.getConnectionManager().isPlayerOnline(username)) {
-            connection.disconnect(ChatUtil.fixColor(server.getConfig().getPlayerOnServer()));
+        final ConnectionManager.TryAddResult result = server.getConnectionManager().tryAddConnecting(username);
+        if (result != ConnectionManager.TryAddResult.SUCCESS) {
+            if (result == ConnectionManager.TryAddResult.ALREADY_CONNECTED) {
+                connection.disconnect(ChatUtil.fixColor(server.getConfig().getPlayerOnServer()));
+            } else if (result == ConnectionManager.TryAddResult.MAX_PLAYERS_REACHED) {
+                connection.disconnect(ChatUtil.fixColor(server.getConfig().getMaxPlayersMessage()));
+            }
             return;
         }
         connection.setGameProfile(new GameProfile(UUIDUtil.getOfflineModeUUID(username), username));

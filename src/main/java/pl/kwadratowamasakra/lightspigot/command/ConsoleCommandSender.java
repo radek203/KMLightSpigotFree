@@ -22,6 +22,6 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public final void sendMessage(final String message) {
-        server.getLogger().info(message);
+        server.getLogger().info(message.replaceAll("§", "&"));
     }
 }

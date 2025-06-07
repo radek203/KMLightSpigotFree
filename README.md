@@ -5,7 +5,7 @@ Warning: I do not take responsibility for the usage of this project in a product
 
 ## What is this project?
 
-This server is built to handle thousands of players all in one server, Initially for guilds kwadratowamasakra.pl project.
+This server is built to handle thousands of players (For safety capped at 15360, 16384 is the OS Limit) all in one server, Initially for guilds kwadratowamasakra.pl project.
 
 It's crafted as a lightweight server, designed for handling tasks like logging in, verifying accounts, and more, without the overhead of managing worlds, etc.
 

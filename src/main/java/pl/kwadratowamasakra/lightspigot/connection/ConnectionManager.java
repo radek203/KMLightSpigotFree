@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ConnectionManager {
 
+    private static final int MAX_PLAYERS = 15360;
+
     private final LightSpigotServer server;
     private final MultiIndexPlayerStore connections = new MultiIndexPlayerStore();
     private final Map<String, Integer> suspectedConnections = new ConcurrentHashMap<>();
@@ -46,7 +48,7 @@ public class ConnectionManager {
      * @return The maximum number of players.
      */
     public final int getMaxPlayers() {
-        return server.getConfig().getMaxPlayers() == -1 ? onlinePlayers.get() + 1 : server.getConfig().getMaxPlayers();
+        return server.getConfig().getMaxPlayers() == -1 ? Math.min(onlinePlayers.get() + 1, MAX_PLAYERS) : server.getConfig().getMaxPlayers();
     }
 
     /**
@@ -148,6 +150,19 @@ public class ConnectionManager {
     }
 
     /**
+     * Checks if a player with the specified name is online and add to connecting list if it is possible.
+     *
+     * @param name The name of the player to check.
+     * @return TryAddResult indicating the result of the operation:
+     *  - ALREADY_CONNECTED if the player is already connected,
+     *  - MAX_PLAYERS_REACHED if the maximum number of players has been reached,
+     *  - SUCCESS if the player was successfully added to the connecting list.
+     */
+    public final TryAddResult tryAddConnecting(final String name) {
+        return connections.tryAddConnecting(name, Math.min(MAX_PLAYERS, server.getConfig().getMaxPlayers() == -1 ? MAX_PLAYERS : server.getConfig().getMaxPlayers()));
+    }
+
+    /**
      * @return The list of all active connections.
      */
     public final List<PlayerConnection> getConnections() {
@@ -209,6 +224,12 @@ public class ConnectionManager {
      */
     public final void removeOp(final String name) {
         serverOperators.remove(name);
+    }
+
+    public enum TryAddResult {
+        ALREADY_CONNECTED,
+        MAX_PLAYERS_REACHED,
+        SUCCESS
     }
 
 }

@@ -99,12 +99,12 @@ public class LightSpigotServer {
         final Class<? extends ServerChannel> channelClass;
 
         if (Epoll.isAvailable()) {
-            bossGroup = new EpollEventLoopGroup(1);
-            workerGroup = new EpollEventLoopGroup(4);
+            bossGroup = new EpollEventLoopGroup(config.getBossGroupThreads());
+            workerGroup = new EpollEventLoopGroup(config.getWorkerGroupThreads());
             channelClass = EpollServerSocketChannel.class;
         } else {
-            bossGroup = new NioEventLoopGroup(1);
-            workerGroup = new NioEventLoopGroup(4);
+            bossGroup = new NioEventLoopGroup(config.getBossGroupThreads());
+            workerGroup = new NioEventLoopGroup(config.getWorkerGroupThreads());
             channelClass = NioServerSocketChannel.class;
         }
 

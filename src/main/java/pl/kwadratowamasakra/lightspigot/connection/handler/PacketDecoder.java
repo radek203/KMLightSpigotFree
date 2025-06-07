@@ -77,7 +77,7 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
             }
         }
 
-        if (connection.tryAcceptGlobalPacket(server.getConfig().getPacketCountReset(), server.getConfig().getPacketCountMax())) {
+        if (server.getConfig().isPacketLimiterEnabled() && connection.tryAcceptGlobalPacket(server.getConfig().getPacketCountReset(), server.getConfig().getPacketCountMax())) {
             throw new DecoderException("PacketCount > " + server.getConfig().getPacketCountMax());
         }
 
@@ -94,7 +94,7 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
         }
         final PacketIn packetIn = ((PacketIn) packet);
 
-        if (connection.tryAcceptPacket(server.getConfig().getPacketCountReset(), packetIn.getClass(), packetIn.getLimit())) {
+        if (server.getConfig().isPacketLimiterEnabled() && connection.tryAcceptPacket(server.getConfig().getPacketCountReset(), packetIn.getClass(), packetIn.getLimit())) {
             throw new DecoderException("PacketCount (" + packetIn.getClass().getSimpleName() + ") > Limit");
         }
 

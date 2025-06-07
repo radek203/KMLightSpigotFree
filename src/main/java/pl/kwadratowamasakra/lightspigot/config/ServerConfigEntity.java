@@ -21,13 +21,17 @@ public class ServerConfigEntity implements FileProviderEntity {
     private final long keepAliveBroadcast;
     private final String motdVersion;
     private final String motdDescription;
+    private final boolean packetLimiterEnabled;
     private final int packetCountMax;
     private final long packetCountReset;
     private final int minVersion;
     private final int maxVersion;
     private final String unsupportedVersionMessage;
     private final int maxPlayers;
+    private final String maxPlayersMessage;
     private final int networkThreshold;
+    private final int bossGroupThreads;
+    private final int workerGroupThreads;
     private final boolean proxyEnabled;
     private final boolean chatOn;
     private final String chatMessageOff;
@@ -72,13 +76,17 @@ public class ServerConfigEntity implements FileProviderEntity {
         unsupportedVersionMessage = configuration.getString("network.version.message");
 
         playerOnServer = configuration.getString("network.playerOnServer");
+        packetLimiterEnabled = configuration.getBoolean("network.packets.limited");
         packetCountMax = configuration.getInt("network.packets.count");
         packetCountReset = configuration.getInt("network.packets.time");
         defaultGamemode = configuration.getInt("network.defaultGamemode");
         defaultDimension = configuration.getInt("network.defaultDimension");
         keepAliveBroadcast = configuration.getInt("network.keepAliveBroadcast");
         maxPlayers = configuration.getInt("network.maxPlayers");
+        maxPlayersMessage = configuration.getString("network.maxPlayersMessage");
         networkThreshold = configuration.getInt("network.networkThreshold");
+        bossGroupThreads = configuration.getInt("network.bossGroupThreads");
+        workerGroupThreads = configuration.getInt("network.workerGroupThreads");
         chatOn = configuration.getBoolean("network.chat.status");
         chatMessageOff = configuration.getString("network.chat.message");
         restart = configuration.getString("network.restart");
@@ -143,6 +151,10 @@ public class ServerConfigEntity implements FileProviderEntity {
         return motdDescription;
     }
 
+    public final boolean isPacketLimiterEnabled() {
+        return packetLimiterEnabled;
+    }
+
     public final int getPacketCountMax() {
         return packetCountMax;
     }
@@ -167,8 +179,20 @@ public class ServerConfigEntity implements FileProviderEntity {
         return maxPlayers;
     }
 
+    public final String getMaxPlayersMessage() {
+        return maxPlayersMessage;
+    }
+
     public final int getNetworkThreshold() {
         return networkThreshold;
+    }
+
+    public final int getBossGroupThreads() {
+        return bossGroupThreads;
+    }
+
+    public final int getWorkerGroupThreads() {
+        return workerGroupThreads;
     }
 
     public final boolean isProxyEnabled() {

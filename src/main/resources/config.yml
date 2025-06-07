@@ -11,7 +11,7 @@ checks:
   badName: "&cYou cannot join using such a nickname!"
 motd:
   version: "KMLightSpigot"
-  description: "&eThe server is running the KMLightSpigot engine!\nCreated by: radek203"
+  description: "&eThe server is running the KMLightSpigot!\nCreated by: radek203"
 command:
   notExists: "&cSuch a command does not exist!"
   noPermission: "&cYou do not have access to this command!"
@@ -19,7 +19,8 @@ network:
   proxy:
     enabled: false
     ips: [ "127.0.0.1", "localhost" ]
-  packets:
+  packets: # Do not change if you do not know what you are doing!
+    limited: true
     count: 250
     time: 250
   version: # https://minecraft.fandom.com/wiki/Protocol_version
@@ -30,9 +31,12 @@ network:
   restart: "&cServer restart! Please join again in a moment!"
   defaultGamemode: 3
   defaultDimension: 1
-  keepAliveBroadcast: 5000
+  keepAliveBroadcast: 5000 # Do not change if you do not know what you are doing!
   maxPlayers: -1
+  maxPlayersMessage: "&cThe server is full! Please try again later!"
   networkThreshold: -1
+  bossGroupThreads: 1 # Do not change if you do not know what you are doing!
+  workerGroupThreads: 4 # Do not change if you do not know what you are doing!
   chat:
     status: false
     message: "&cYou cannot do this here!"
