@@ -1,9 +1,9 @@
 package pl.kwadratowamasakra.lightspigot.event;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The EventManager class manages the events in the system.
@@ -14,7 +14,7 @@ public class EventManager {
     /**
      * A map that associates each event type with a list of event listeners.
      */
-    private final Map<Class<? extends Event>, List<EventListener<? extends Event>>> eventListenerMap = new HashMap<>();
+    private final Map<Class<? extends Event>, List<EventListener<? extends Event>>> eventListenerMap = new ConcurrentHashMap<>();
 
     /**
      * Handles an event by calling all the event listeners associated with the event's type.
@@ -38,7 +38,7 @@ public class EventManager {
      * @param eventListener The event listener to be added.
      */
     public final void addEvent(final Class<? extends Event> eventClass, final EventListener<? extends Event> eventListener) {
-        eventListenerMap.putIfAbsent(eventClass, new ArrayList<>());
+        eventListenerMap.putIfAbsent(eventClass, new CopyOnWriteArrayList<>());
         eventListenerMap.get(eventClass).add(eventListener);
     }
 }

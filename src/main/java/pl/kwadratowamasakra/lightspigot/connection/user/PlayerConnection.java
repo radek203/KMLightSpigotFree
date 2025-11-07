@@ -113,7 +113,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
         }
 
         if (channel.pipeline().get("compress") instanceof NettyCompressionEncoder) {
-            ((NettyCompressionEncoder) channel.pipeline().get("decompress")).setCompressionThreshold(threshold);
+            ((NettyCompressionEncoder) channel.pipeline().get("compress")).setCompressionThreshold(threshold);
         } else {
             channel.pipeline().addBefore("encoder", "compress", new NettyCompressionEncoder(threshold));
         }
@@ -362,7 +362,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      * @return The IP address of the client.
      */
     public final String getIp() {
-        return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostName();
+        return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
     }
 
     /**

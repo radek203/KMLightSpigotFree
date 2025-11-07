@@ -94,7 +94,7 @@ public class MultiIndexPlayerStore {
     public List<PlayerConnection> getByIp(final String ip) {
         readLock.lock();
         try {
-            return new ArrayList<>(byIp.get(ip));
+            return new ArrayList<>(byIp.getOrDefault(ip, Collections.emptyList()));
         } finally {
             readLock.unlock();
         }
