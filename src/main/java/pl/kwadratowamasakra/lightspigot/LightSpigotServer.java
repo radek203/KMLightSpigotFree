@@ -2,6 +2,8 @@ package pl.kwadratowamasakra.lightspigot;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.epoll.Epoll;
@@ -46,6 +48,7 @@ public class LightSpigotServer {
     private ConsoleHandler console;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
+    private Channel serverChannel;
 
     private boolean closing = false;
 
@@ -111,7 +114,7 @@ public class LightSpigotServer {
         try {
             final InetAddress address = InetAddress.getByName(config.getHostname());
 
-            new ServerBootstrap()
+            final ChannelFuture bindFuture = new ServerBootstrap()
                     .group(bossGroup, workerGroup)
                     .channel(channelClass)
                     .childHandler(new ClientChannelInitializer(this, packetManager))
@@ -119,7 +122,9 @@ public class LightSpigotServer {
                     .localAddress(new InetSocketAddress(address, config.getPort()))
                     .bind()
                     .sync();
+            serverChannel = bindFuture.channel();
         } catch (final UnknownHostException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -141,6 +146,7 @@ public class LightSpigotServer {
 
         keepAliveTask.cancel();
 
+        serverChannel.close().syncUninterruptibly();
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 

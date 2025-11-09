@@ -52,11 +52,9 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
             return;
         }
 
-        final PacketBuffer buffer = new PacketBuffer();
+        final PacketBuffer buffer = new PacketBuffer(byteBuf);
         buffer.writeVarInt(packetId);
         ((PacketOut) packet).write(connection, buffer);
-
-        byteBuf.writeBytes(buffer.getBuf());
     }
 
 }
