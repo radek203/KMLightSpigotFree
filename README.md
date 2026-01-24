@@ -13,9 +13,9 @@ Specifically designed for players playing Minecraft version 1.8-1.12.2, it also 
 
 ## How to run (Linux)
 
-- Install Java 21
+- Install Java 25
 
-  - https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/generic-linux-install.html
+  - https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/generic-linux-install.html
  
 - Install screen
   - https://www.digitalocean.com/community/tutorials/how-to-install-and-use-screen-on-an-ubuntu-cloud-server
