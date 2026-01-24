@@ -53,7 +53,11 @@ public enum Version {
     V1_21(767), //1.21-1.21.1
     V1_21_2(768), //1.21.2-1.21.3
     V1_21_4(769),
-    V1_21_5(770);
+    V1_21_5(770),
+    V1_21_6(771),
+    V1_21_7(772), //1.21.7-1.21.8
+    V1_21_9(773), //1.21.9-1.21.10
+    V1_21_11(774);
 
     private static final Map<Integer, Version> VERSION_MAP = new HashMap<>();
     @Getter
