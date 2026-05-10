@@ -10,6 +10,11 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 @NoArgsConstructor
 public class PacketPlayOutAbilities extends PacketOut {
 
+    public static final int FLYING = 0x02;
+    public static final int ALLOW_FLYING = 0x04;
+    public static final float DEFAULT_FLYING_SPEED = 0.1F;
+    public static final float DEFAULT_FIELD_OF_VIEW = 0.1F;
+
     /*
     private boolean isInvulnerable;
     private boolean isFlying;

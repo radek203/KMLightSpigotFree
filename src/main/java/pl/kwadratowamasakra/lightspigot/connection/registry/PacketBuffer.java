@@ -70,19 +70,20 @@ public class PacketBuffer extends ByteBuf {
 
     public final int readVarInt() {
         int i = 0;
-        final int maxRead = Math.min(5, buf.readableBytes());
-
-        for (int j = 0; j < maxRead; j++) {
+        for (int j = 0; j < 5; j++) {
+            if (!buf.isReadable()) {
+                throw new IllegalArgumentException("Incomplete VarInt");
+            }
             final int k = buf.readByte();
+            if (j == 4 && (k & 0xF0) != 0) {
+                throw new IllegalArgumentException("VarInt exceeds 32 bits");
+            }
             i |= (k & 0x7F) << j * 7;
             if ((k & 0x80) != 128) {
                 return i;
             }
         }
-
-        buf.readBytes(maxRead);
-
-        throw new IllegalArgumentException("Cannot read VarInt");
+        throw new IllegalArgumentException("VarInt is too long");
     }
 
     // https://steinborn.me/posts/performance/how-fast-can-you-write-a-varint/
@@ -105,11 +106,20 @@ public class PacketBuffer extends ByteBuf {
         }
     }
 
+    public void writeLongVar(long i) {
+        while ((i & -128L) != 0L) {
+            this.writeByte((int) (i & 127L) | 128);
+            i >>>= 7;
+        }
+        this.writeByte((int) i);
+    }
+
     public final String readString() {
         return readString(readVarInt());
     }
 
     public final String readString(final int length) {
+        validateReadableLength(length, "String");
         final String str = buf.toString(buf.readerIndex(), length, StandardCharsets.UTF_8);
         buf.skipBytes(length);
         return str;
@@ -123,6 +133,7 @@ public class PacketBuffer extends ByteBuf {
 
     public final byte[] readBytesArray() {
         final int length = readVarInt();
+        validateReadableLength(length, "Byte array");
         final byte[] array = new byte[length];
         buf.readBytes(array);
         return array;
@@ -143,11 +154,23 @@ public class PacketBuffer extends ByteBuf {
     }
 
     public final <T extends Enum<T>> T readEnumValue(final Class<T> enumClass) {
-        return (enumClass.getEnumConstants())[readVarInt()];
+        final T[] values = enumClass.getEnumConstants();
+        final int ordinal = readVarInt();
+        if (ordinal < 0 || ordinal >= values.length) {
+            throw new IllegalArgumentException("Invalid " + enumClass.getSimpleName() + " ordinal: " + ordinal);
+        }
+        return values[ordinal];
     }
 
     public final void writeEnumValue(final Enum<?> value) {
         writeVarInt(value.ordinal());
+    }
+
+    private void validateReadableLength(final int length, final String valueName) {
+        if (length < 0 || length > buf.readableBytes()) {
+            throw new IllegalArgumentException(valueName + " length " + length
+                    + " exceeds readable bytes " + buf.readableBytes());
+        }
     }
 
     @Override

@@ -31,6 +31,7 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
 
     private final PacketLimiter globalPacketLimiter = new PacketLimiter();
     private final Map<Class<? extends PacketIn>, PacketLimiter> individualPacketLimiters = new HashMap<>();
+    private final Map<Integer, ItemStack> inventory = new HashMap<>();
 
     private final Channel channel;
     private final LightSpigotServer server;
@@ -38,6 +39,12 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
     private ConnectionState connectionState;
     private GameProfile gameProfile;
     private Version version = Version.UNDEFINED;
+    private int heldItemSlot;
+    private volatile double x;
+    private volatile double y;
+    private volatile double z;
+    private volatile float yaw;
+    private volatile float pitch;
 
     /**
      * Constructs a new PlayerConnection with the specified channel and server.
@@ -458,7 +465,51 @@ public class PlayerConnection extends ChannelInboundHandlerAdapter implements Co
      * @param item The item to show.
      */
     public final void setItem(final int slot, final ItemStack item) {
+        updateInventoryItem(slot, item);
         sendPacket(new PacketPlayOutSetSlot(0, slot, item));
+    }
+
+    public final void updateInventoryItem(final int slot, final ItemStack item) {
+        if (slot < 0 || slot > 45) {
+            throw new IllegalArgumentException("Invalid inventory slot: " + slot);
+        }
+        if (item == null || !item.isItem()) {
+            inventory.remove(slot);
+        } else {
+            inventory.put(slot, item);
+        }
+    }
+
+    public final void setHeldItemSlot(final int heldItemSlot) {
+        if (heldItemSlot < 0 || heldItemSlot > 8) {
+            throw new IllegalArgumentException("Invalid held item slot: " + heldItemSlot);
+        }
+        this.heldItemSlot = heldItemSlot;
+    }
+
+    public final ItemStack getHeldItem(final int hand) {
+        if (hand == 0) {
+            return inventory.get(36 + heldItemSlot);
+        }
+        if (hand == 1) {
+            return inventory.get(45);
+        }
+        return null;
+    }
+
+    public final void updatePosition(final double x, final double y, final double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public final void updateRotation(final float yaw, final float pitch) {
+        this.yaw = yaw;
+        this.pitch = pitch;
+    }
+
+    public final float getYaw() {
+        return yaw;
     }
 
     /**

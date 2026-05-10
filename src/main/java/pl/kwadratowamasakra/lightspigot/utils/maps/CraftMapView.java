@@ -45,9 +45,11 @@ public final class CraftMapView implements MapView {
         if (renderers.contains(renderer)) {
             renderers.remove(renderer);
             final CraftMapCanvas entry = canvases.get(renderer);
-            for (int x = 0; x < 128; ++x) {
-                for (int y = 0; y < 128; ++y) {
-                    entry.setPixel(x, y, (byte) -1);
+            if (entry != null) {
+                for (int x = 0; x < 128; ++x) {
+                    for (int y = 0; y < 128; ++y) {
+                        entry.setPixel(x, y, (byte) -1);
+                    }
                 }
             }
             canvases.remove(renderer);

@@ -21,10 +21,13 @@ public class PacketPlayInSetCreativeSlot extends PacketIn {
     @Override
     public final void handle(final PlayerConnection connection, final LightSpigotServer server) {
         connection.verifyState(ConnectionState.PLAY);
+        if (connection.isOp() && slotId >= 0 && slotId <= 45) {
+            connection.updateInventoryItem(slotId, item);
+        }
     }
 
     @Override
     public final int getLimit() {
-        return 5;
+        return 10;
     }
 }
