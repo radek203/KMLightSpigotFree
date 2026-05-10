@@ -30,7 +30,6 @@ network:
   playerOnServer: "&cA player with your nickname is already on the server!"
   restart: "&cServer restart! Please join again in a moment!"
   defaultGamemode: 3
-  defaultDimension: 1
   keepAliveBroadcast: 5000 # Do not change if you do not know what you are doing!
   maxPlayers: -1
   maxPlayersMessage: "&cThe server is full! Please try again later!"

@@ -25,7 +25,7 @@ public class PacketPlayOutPosition extends PacketOut {
         packetBuffer.writeDouble(z);
         packetBuffer.writeFloat(yaw);
         packetBuffer.writeFloat(pitch);
-        packetBuffer.writeByte(0x08);
+        packetBuffer.writeByte(0x00);
 
         if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
             packetBuffer.writeVarInt(teleportId);

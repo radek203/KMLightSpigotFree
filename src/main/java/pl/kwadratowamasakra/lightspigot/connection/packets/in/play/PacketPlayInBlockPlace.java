@@ -19,8 +19,20 @@ public class PacketPlayInBlockPlace extends PacketIn {
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
-        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
+        if (connection.getVersion().isInRange(Version.V1_9, Version.V1_10)) {
+            position = packetBuffer.readLong();
+            placedBlockDirection = packetBuffer.readVarInt();
             hand = packetBuffer.readVarInt();
+            facingX = packetBuffer.readUnsignedByte() / 16.0F;
+            facingY = packetBuffer.readUnsignedByte() / 16.0F;
+            facingZ = packetBuffer.readUnsignedByte() / 16.0F;
+        } else if (connection.getVersion().isEqualOrHigher(Version.V1_11)) {
+            position = packetBuffer.readLong();
+            placedBlockDirection = packetBuffer.readVarInt();
+            hand = packetBuffer.readVarInt();
+            facingX = packetBuffer.readFloat();
+            facingY = packetBuffer.readFloat();
+            facingZ = packetBuffer.readFloat();
         } else {
             position = packetBuffer.readLong();
             placedBlockDirection = packetBuffer.readUnsignedByte();

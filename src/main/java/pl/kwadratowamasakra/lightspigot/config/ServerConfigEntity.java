@@ -17,7 +17,6 @@ public class ServerConfigEntity implements FileProviderEntity {
     private final String badName;
     private final String playerOnServer;
     private final int defaultGamemode;
-    private final int defaultDimension;
     private final long keepAliveBroadcast;
     private final String motdVersion;
     private final String motdDescription;
@@ -80,7 +79,6 @@ public class ServerConfigEntity implements FileProviderEntity {
         packetCountMax = configuration.getInt("network.packets.count");
         packetCountReset = configuration.getInt("network.packets.time");
         defaultGamemode = configuration.getInt("network.defaultGamemode");
-        defaultDimension = configuration.getInt("network.defaultDimension");
         keepAliveBroadcast = configuration.getInt("network.keepAliveBroadcast");
         maxPlayers = configuration.getInt("network.maxPlayers");
         maxPlayersMessage = configuration.getString("network.maxPlayersMessage");
@@ -133,10 +131,6 @@ public class ServerConfigEntity implements FileProviderEntity {
 
     public final int getDefaultGamemode() {
         return defaultGamemode;
-    }
-
-    public final int getDefaultDimension() {
-        return defaultDimension;
     }
 
     public final long getKeepAliveBroadcast() {

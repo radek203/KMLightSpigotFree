@@ -82,16 +82,19 @@ public class PacketManager {
                 map(Version.V1_8, 0x04), map(Version.V1_9, Version.V1_11_1, 0x0C), map(Version.V1_12, 0x0E), map(Version.V1_12_1, Version.V1_12_2, 0x0D)
         );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInFlying.PacketPlayInLook.class,
-                map(Version.V1_8, 0x05), map(Version.V1_9, Version.V1_11_1, 0x0E), map(Version.V1_12, 0x10), map(Version.V1_12_1, 0x0F), map(Version.V1_12_2, 0x0E)
+                map(Version.V1_8, 0x05), map(Version.V1_9, Version.V1_11_1, 0x0E), map(Version.V1_12, 0x10), map(Version.V1_12_1, Version.V1_12_2, 0x0F)
         );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInFlying.PacketPlayInPositionLook.class,
-                map(Version.V1_8, 0x06), map(Version.V1_9, Version.V1_11_1, 0x0D), map(Version.V1_12, 0x0F), map(Version.V1_12_1, 0x0E), map(Version.V1_12_2, 0x0F)
+                map(Version.V1_8, 0x06), map(Version.V1_9, Version.V1_11_1, 0x0D), map(Version.V1_12, 0x0F), map(Version.V1_12_1, Version.V1_12_2, 0x0E)
         );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInBlockDig.class,
                 map(Version.V1_8, 0x07), map(Version.V1_9, Version.V1_11_1, 0x13), map(Version.V1_12, Version.V1_12_2, 0x14)
         );
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInUseItem.class,
+                map(Version.V1_9, Version.V1_11_1, 0x1D), map(Version.V1_12, Version.V1_12_2, 0x20)
+        );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInBlockPlace.class,
-                map(Version.V1_8, 0x08), map(Version.V1_9, Version.V1_11_1, 0x1D), map(Version.V1_12, Version.V1_12_2, 0x20)
+                map(Version.V1_8, 0x08), map(Version.V1_9, Version.V1_11_1, 0x1C), map(Version.V1_12, Version.V1_12_2, 0x1F)
         );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInHeldItemSlot.class,
                 map(Version.V1_8, 0x09), map(Version.V1_9, Version.V1_11_1, 0x17), map(Version.V1_12, Version.V1_12_2, 0x1A)
@@ -101,6 +104,9 @@ public class PacketManager {
         );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInEntityAction.class,
                 map(Version.V1_8, 0x0B), map(Version.V1_9, Version.V1_11_1, 0x14), map(Version.V1_12, Version.V1_12_2, 0x15)
+        );
+        registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInAbilities.class,
+                map(Version.V1_8, 0x13), map(Version.V1_9, Version.V1_11_1, 0x12), map(Version.V1_12, Version.V1_12_2, 0x13)
         );
         registerPacket(server, PacketDirection.SERVERBOUND, ConnectionState.PLAY, PacketPlayInCloseWindow.class,
                 map(Version.V1_8, 0x0D), map(Version.V1_9, Version.V1_11_1, 0x08), map(Version.V1_12, 0x09), map(Version.V1_12_1, Version.V1_12_2, 0x08)
@@ -136,8 +142,14 @@ public class PacketManager {
         registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutChat.class,
                 map(Version.V1_8, 0x02), map(Version.V1_9, Version.V1_12_2, 0x0F)
         );
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutSpawnPosition.class,
+                map(Version.V1_8, 0x05), map(Version.V1_9, Version.V1_11_1, 0x43), map(Version.V1_12, 0x45), map(Version.V1_12_1, Version.V1_12_2, 0x46)
+        );
         registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutPosition.class,
                 map(Version.V1_8, 0x08), map(Version.V1_9, Version.V1_12, 0x2E), map(Version.V1_12_1, Version.V1_12_2, 0x2F)
+        );
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutChunkData.class,
+                map(Version.V1_8, 0x21), map(Version.V1_9, Version.V1_12_2, 0x20)
         );
 
         registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutSetSlot.class,
