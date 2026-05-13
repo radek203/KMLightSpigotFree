@@ -198,6 +198,9 @@ public class LightSpigotServer {
         return config;
     }
 
+    /**
+     * @return The world.
+     */
     public final World getWorld() {
         return world;
     }

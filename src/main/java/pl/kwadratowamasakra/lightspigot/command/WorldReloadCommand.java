@@ -1,6 +1,7 @@
 package pl.kwadratowamasakra.lightspigot.command;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutBlockChange;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 
@@ -24,6 +25,7 @@ public class WorldReloadCommand extends Command {
             return;
         }
 
+        /*
         try {
             server.getWorld().reloadAndSendUpdates();
             sender.sendMessage(ChatUtil.fixColor("&aWorld reloaded from world.json and sent to online players."));
@@ -31,5 +33,11 @@ public class WorldReloadCommand extends Command {
             sender.sendMessage(ChatUtil.fixColor("&cFailed to reload world.json: &f" + exception.getMessage()));
             server.getLogger().error("An error occurred while reloading world.json.", exception.getMessage());
         }
+
+         */
+        server.getConnectionManager().getConnections().forEach(player -> {
+            PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(0, 1, 0, 57, 0);
+            player.sendPacket(packet);
+        });
     }
 }

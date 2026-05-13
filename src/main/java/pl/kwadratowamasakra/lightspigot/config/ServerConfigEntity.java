@@ -39,6 +39,8 @@ public class ServerConfigEntity implements FileProviderEntity {
     private final String commandNotExists;
     private final String commandNoPermission;
     private final String restart;
+    private int defaultChunksX;
+    private int defaultChunksZ;
 
     /**
      * Constructor for the ServerConfig class.
@@ -91,6 +93,9 @@ public class ServerConfigEntity implements FileProviderEntity {
 
         commandNotExists = configuration.getString("command.notExists");
         commandNoPermission = configuration.getString("command.noPermission");
+
+        defaultChunksX = configuration.getInt("world.defaultChunksX");
+        defaultChunksZ = configuration.getInt("world.defaultChunksZ");
     }
 
     public final boolean isDebugOn() {
@@ -219,6 +224,14 @@ public class ServerConfigEntity implements FileProviderEntity {
 
     public final String getCommandNoPermission() {
         return commandNoPermission;
+    }
+
+    public final int getDefaultChunksX() {
+        return defaultChunksX;
+    }
+
+    public final int getDefaultChunksZ() {
+        return defaultChunksZ;
     }
 
     @Override

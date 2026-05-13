@@ -39,3 +39,6 @@ network:
   chat:
     status: false
     message: "&cYou cannot do this here!"
+world:
+  defaultChunksX: 2
+  defaultChunksZ: 2

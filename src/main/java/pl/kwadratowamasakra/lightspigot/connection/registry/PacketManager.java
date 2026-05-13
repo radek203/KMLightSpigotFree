@@ -148,6 +148,9 @@ public class PacketManager {
         registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutPosition.class,
                 map(Version.V1_8, 0x08), map(Version.V1_9, Version.V1_12, 0x2E), map(Version.V1_12_1, Version.V1_12_2, 0x2F)
         );
+        registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutBlockChange.class,
+                map(Version.V1_8, 0x0B)
+        );
         registerPacket(server, PacketDirection.CLIENTBOUND, ConnectionState.PLAY, PacketPlayOutChunkData.class,
                 map(Version.V1_8, 0x21), map(Version.V1_9, Version.V1_12_2, 0x20)
         );

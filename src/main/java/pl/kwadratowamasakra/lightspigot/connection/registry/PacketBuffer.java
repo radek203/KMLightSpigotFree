@@ -105,6 +105,14 @@ public class PacketBuffer extends ByteBuf {
         }
     }
 
+    public void writeLongVar(long i) {
+        while ((i & -128L) != 0L) {
+            this.writeByte((int) (i & 127L) | 128);
+            i >>>= 7;
+        }
+        this.writeByte((int) i);
+    }
+
     public final String readString() {
         return readString(readVarInt());
     }
