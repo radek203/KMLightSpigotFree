@@ -39,4 +39,9 @@ public class ServerLogger {
         CONSOLE_LOGGER.error(ConsoleColors.RED + "{}\n{}" + ConsoleColors.RESET, message, error);
         FILE_LOGGER.error("{}\n{}", message, error);
     }
+
+    public void warning(String message) {
+        CONSOLE_LOGGER.warn(ConsoleColors.YELLOW + "{}" + ConsoleColors.RESET, message);
+        FILE_LOGGER.warn(message);
+    }
 }
