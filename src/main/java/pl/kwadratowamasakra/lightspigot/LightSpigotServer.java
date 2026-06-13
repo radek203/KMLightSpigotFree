@@ -1,15 +1,11 @@
 package pl.kwadratowamasakra.lightspigot;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.ServerChannel;
+import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollIoHandler;
 import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import pl.kwadratowamasakra.lightspigot.command.CommandManager;
 import pl.kwadratowamasakra.lightspigot.config.ServerConfigEntity;
@@ -102,12 +98,14 @@ public class LightSpigotServer {
         final Class<? extends ServerChannel> channelClass;
 
         if (Epoll.isAvailable()) {
-            bossGroup = new EpollEventLoopGroup(config.getBossGroupThreads());
-            workerGroup = new EpollEventLoopGroup(config.getWorkerGroupThreads());
+            IoHandlerFactory factory = EpollIoHandler.newFactory();
+            bossGroup = new MultiThreadIoEventLoopGroup(config.getBossGroupThreads(), factory);
+            workerGroup = new MultiThreadIoEventLoopGroup(config.getWorkerGroupThreads(), factory);
             channelClass = EpollServerSocketChannel.class;
         } else {
-            bossGroup = new NioEventLoopGroup(config.getBossGroupThreads());
-            workerGroup = new NioEventLoopGroup(config.getWorkerGroupThreads());
+            IoHandlerFactory factory = NioIoHandler.newFactory();
+            bossGroup = new MultiThreadIoEventLoopGroup(config.getBossGroupThreads(), factory);
+            workerGroup = new MultiThreadIoEventLoopGroup(config.getWorkerGroupThreads(), factory);
             channelClass = NioServerSocketChannel.class;
         }
 
