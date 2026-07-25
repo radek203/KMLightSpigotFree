@@ -6,23 +6,22 @@ import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
-public class PacketPlayInHeldItemSlot extends PacketIn {
+public class PacketPlayInUseItem extends PacketIn {
 
-    private int slotId;
+    private int hand;
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
-        slotId = packetBuffer.readShort();
+        hand = packetBuffer.readVarInt();
     }
 
     @Override
     public final void handle(final PlayerConnection connection, final LightSpigotServer server) {
         connection.verifyState(ConnectionState.PLAY);
-        connection.setHeldItemSlot(slotId);
     }
 
     @Override
     public final int getLimit() {
-        return 15;
+        return 30;
     }
 }

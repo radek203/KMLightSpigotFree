@@ -1,6 +1,8 @@
 package pl.kwadratowamasakra.lightspigot.plugin;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
+import pl.kwadratowamasakra.lightspigot.command.WorldReloadCommand;
+import pl.kwadratowamasakra.lightspigot.command.WorldSaveCommand;
 import pl.kwadratowamasakra.lightspigot.command.StopCommand;
 import pl.kwadratowamasakra.lightspigot.config.Configuration;
 import pl.kwadratowamasakra.lightspigot.config.FileHelper;
@@ -68,6 +70,8 @@ public class PluginManager {
      */
     public final void loadPlugins(final LightSpigotServer server) {
         new StopCommand(server);
+        new WorldReloadCommand(server);
+        new WorldSaveCommand(server);
 
         try {
             final File file = new File("plugins");

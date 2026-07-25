@@ -17,6 +17,7 @@ import pl.kwadratowamasakra.lightspigot.event.EventManager;
 import pl.kwadratowamasakra.lightspigot.plugin.PluginManager;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 import pl.kwadratowamasakra.lightspigot.utils.logger.ServerLogger;
+import pl.kwadratowamasakra.lightspigot.world.World;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -37,6 +38,7 @@ public class LightSpigotServer {
     private final CommandManager commandManager = new CommandManager();
     private final EventManager eventManager = new EventManager();
     private final PluginManager pluginManager = new PluginManager();
+    private final World world;
 
     private final ServerLogger logger;
     private final ServerConfigEntity config;
@@ -61,6 +63,7 @@ public class LightSpigotServer {
         logger = new ServerLogger(config.isDebugOn());
 
         packetManager.registerPackets(this);
+        world = new World(this);
     }
 
     /**
@@ -191,6 +194,13 @@ public class LightSpigotServer {
      */
     public final ServerConfigEntity getConfig() {
         return config;
+    }
+
+    /**
+     * @return The world.
+     */
+    public final World getWorld() {
+        return world;
     }
 
     /**

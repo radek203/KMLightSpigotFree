@@ -5,6 +5,8 @@ import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
+import pl.kwadratowamasakra.lightspigot.world.BlockPosition;
+import pl.kwadratowamasakra.lightspigot.world.World;
 
 public class PacketPlayInBlockDig extends PacketIn {
 
@@ -22,6 +24,26 @@ public class PacketPlayInBlockDig extends PacketIn {
     @Override
     public final void handle(final PlayerConnection connection, final LightSpigotServer server) {
         connection.verifyState(ConnectionState.PLAY);
+        if (status != Action.START_DESTROY_BLOCK && status != Action.STOP_DESTROY_BLOCK) {
+            return;
+        }
+
+        final BlockPosition blockPosition = BlockPosition.fromLong(position);
+        final World world = server.getWorld();
+        if (!connection.isOp() || !world.isInsideWorldBounds(blockPosition.x(), blockPosition.z())) {
+            BlockUpdateSender.sendBlock(connection, world, blockPosition);
+            return;
+        }
+        if (world.getBlockValue(blockPosition.x(), blockPosition.y(), blockPosition.z()) != 0) {
+            world.setBlock(blockPosition.x(), blockPosition.y(), blockPosition.z(), 0, 0);
+        }
+
+        BlockUpdateSender.sendBlock(connection, world, blockPosition);
+        for (final PlayerConnection other : server.getConnectionManager().getConnections()) {
+            if (other != connection) {
+                BlockUpdateSender.sendBlock(other, world, blockPosition);
+            }
+        }
     }
 
     @Override

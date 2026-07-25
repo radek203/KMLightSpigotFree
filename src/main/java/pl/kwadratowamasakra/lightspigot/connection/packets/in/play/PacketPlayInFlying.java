@@ -25,6 +25,14 @@ public class PacketPlayInFlying extends PacketIn {
     @Override
     public final void handle(final PlayerConnection connection, final LightSpigotServer server) {
         connection.verifyState(ConnectionState.PLAY);
+        if (this instanceof PacketPlayInPositionLook) {
+            connection.updatePosition(x, y, z);
+            connection.updateRotation(yaw, pitch);
+        } else if (this instanceof PacketPlayInPosition) {
+            connection.updatePosition(x, y, z);
+        } else if (this instanceof PacketPlayInLook) {
+            connection.updateRotation(yaw, pitch);
+        }
     }
 
     @Override
