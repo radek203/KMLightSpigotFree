@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.world.BlockPosition;
 
 class BlockPositionTest {
@@ -30,6 +31,15 @@ class BlockPositionTest {
         Assertions.assertEquals(new BlockPosition(9, 70, -4), origin.relative(4));
         Assertions.assertEquals(new BlockPosition(11, 70, -4), origin.relative(5));
         Assertions.assertThrows(IllegalArgumentException.class, () -> origin.relative(6));
+    }
+
+    @Test
+    void protocol114ShouldMoveYToTheLeastSignificantBits() {
+        final BlockPosition position = new BlockPosition(-123, 255, 456);
+        final long packed = ((long) -123 & 0x3FFFFFFL) << 38
+                | ((long) 456 & 0x3FFFFFFL) << 12 | 255;
+        Assertions.assertEquals(packed, position.toLong(Version.V1_14));
+        Assertions.assertEquals(position, BlockPosition.fromLong(packed, Version.V1_17_1));
     }
 
     private static void assertRoundTrip(final int x, final int y, final int z) {

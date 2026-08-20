@@ -1,9 +1,9 @@
 package pl.kwadratowamasakra.lightspigot.plugin;
 
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
+import pl.kwadratowamasakra.lightspigot.command.StopCommand;
 import pl.kwadratowamasakra.lightspigot.command.WorldReloadCommand;
 import pl.kwadratowamasakra.lightspigot.command.WorldSaveCommand;
-import pl.kwadratowamasakra.lightspigot.command.StopCommand;
 import pl.kwadratowamasakra.lightspigot.config.Configuration;
 import pl.kwadratowamasakra.lightspigot.config.FileHelper;
 

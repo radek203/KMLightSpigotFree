@@ -28,7 +28,7 @@ public class PacketPlayInBlockDig extends PacketIn {
             return;
         }
 
-        final BlockPosition blockPosition = BlockPosition.fromLong(position);
+        final BlockPosition blockPosition = BlockPosition.fromLong(position, connection.getVersion());
         final World world = server.getWorld();
         if (!connection.isOp() || !world.isInsideWorldBounds(blockPosition.x(), blockPosition.z())) {
             BlockUpdateSender.sendBlock(connection, world, blockPosition);

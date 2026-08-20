@@ -68,6 +68,35 @@ class PacketPlayOutChunkDataTest {
         channel.finishAndReleaseAll();
     }
 
+    @Test
+    void protocol113ShouldEncodeBiomesAs256Integers() {
+        final ChunkSnapshot chunk = oneSectionChunk();
+        final PacketBuffer output = new PacketBuffer();
+        final EmbeddedChannel channel = new EmbeddedChannel();
+        final PlayerConnection connection = new PlayerConnection(channel, null);
+        connection.setVersion(Version.V1_13);
+
+        packet(chunk).write(connection, output);
+
+        assertHeader(output, chunk);
+        Assertions.assertEquals(chunk.primaryBitMask(), output.readVarInt());
+        final byte[] payloadBytes = new byte[output.readVarInt()];
+        output.readBytes(payloadBytes);
+        final PacketBuffer payload = new PacketBuffer();
+        payload.writeBytes(payloadBytes);
+        final int bitsPerBlock = payload.readUnsignedByte();
+        final int paletteSize = payload.readVarInt();
+        for (int i = 0; i < paletteSize; i++) payload.readVarInt();
+        payload.skipBytes(payload.readVarInt() * Long.BYTES);
+        payload.skipBytes(2 * 2048); // block and sky light
+        Assertions.assertEquals(256 * Integer.BYTES, payload.readableBytes());
+        for (int i = 0; i < 256; i++) Assertions.assertEquals(127, payload.readInt());
+        Assertions.assertTrue(bitsPerBlock >= 4);
+        Assertions.assertEquals(0, output.readVarInt());
+        Assertions.assertFalse(output.isReadable());
+        channel.finishAndReleaseAll();
+    }
+
     private static PacketPlayOutChunkData packet(final ChunkSnapshot chunk) {
         return new PacketPlayOutChunkData(
                 chunk.chunkX(), chunk.chunkZ(), true, chunk.primaryBitMask(), chunk.chunkData());

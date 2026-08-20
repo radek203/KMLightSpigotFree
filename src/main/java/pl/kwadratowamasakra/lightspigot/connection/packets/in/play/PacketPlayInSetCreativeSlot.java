@@ -15,7 +15,7 @@ public class PacketPlayInSetCreativeSlot extends PacketIn {
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         slotId = packetBuffer.readShort();
-        item = packetBuffer.readItemStack();
+        item = packetBuffer.readItemStack(connection);
     }
 
     @Override

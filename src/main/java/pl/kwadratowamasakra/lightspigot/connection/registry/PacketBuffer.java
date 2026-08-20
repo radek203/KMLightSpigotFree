@@ -5,6 +5,8 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
+import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.utils.ItemStack;
 
 import java.io.IOException;
@@ -57,6 +59,42 @@ public class PacketBuffer extends ByteBuf {
         }
     }
 
+    public void writeItemStack(final PlayerConnection connection, final ItemStack itemStack) {
+        final Version version = connection.getVersion();
+        if (version.isLessThan(Version.V1_13)) {
+            writeItemStack(itemStack);
+            return;
+        }
+        final boolean present = itemStack != null && itemStack.isItem();
+        if (version.isEqualOrHigher(Version.V1_20_5)) {
+            if (!present) {
+                if (version.isInRange(Version.V1_20_5, Version.V1_21)) writeByte(0);
+                else writeVarInt(0);
+                return;
+            }
+            if (version.isInRange(Version.V1_20_5, Version.V1_21)) writeByte(itemStack.getCount());
+            else writeVarInt(itemStack.getCount());
+            writeVarInt(ProtocolMappings.itemId(version, itemStack));
+            writeVarInt(0); // added data components
+            writeVarInt(0); // removed data components
+            return;
+        }
+        if (version.isEqualOrHigher(Version.V1_13_2)) {
+            writeBoolean(present);
+            if (!present) {
+                return;
+            }
+            writeVarInt(ProtocolMappings.itemId(version, itemStack));
+        } else {
+            writeShort(present ? ProtocolMappings.itemId(version, itemStack) : -1);
+            if (!present) {
+                return;
+            }
+        }
+        writeByte(itemStack.getCount());
+        writeByte(0); // absent optional NBT
+    }
+
     public ItemStack readItemStack() {
         short itemId = readShort();
         if (itemId == -1) {
@@ -66,6 +104,78 @@ public class PacketBuffer extends ByteBuf {
         short data = readShort();
         byte b = readByte();
         return new ItemStack(itemId, count, data);
+    }
+
+    public ItemStack readItemStack(final PlayerConnection connection) {
+        final Version version = connection.getVersion();
+        if (version.isLessThan(Version.V1_13)) {
+            return readItemStack();
+        }
+        final int itemId;
+        if (version.isEqualOrHigher(Version.V1_20_5)) {
+            final int count = version.isInRange(Version.V1_20_5, Version.V1_21)
+                    ? readUnsignedByte() : readVarInt();
+            if (count == 0) return new ItemStack();
+            final int modernId = readVarInt();
+            final int addedComponents = readVarInt();
+            final int removedComponents = readVarInt();
+            if (addedComponents != 0 || removedComponents != 0) {
+                // Packet handlers only need the base item. Remaining component bytes are intentionally ignored.
+                return ProtocolMappings.legacyItem(version, modernId, count);
+            }
+            return ProtocolMappings.legacyItem(version, modernId, count);
+        }
+        if (version.isEqualOrHigher(Version.V1_13_2)) {
+            if (!readBoolean()) {
+                return new ItemStack();
+            }
+            itemId = readVarInt();
+        } else {
+            itemId = readShort();
+            if (itemId == -1) {
+                return new ItemStack();
+            }
+        }
+        final int count = readUnsignedByte();
+        skipOptionalNbt();
+        return ProtocolMappings.legacyItem(version, itemId, count);
+    }
+
+    public void skipOptionalNbt() {
+        final int tagType = readUnsignedByte();
+        if (tagType == 0) {
+            return;
+        }
+        skipBytes(readUnsignedShort());
+        skipNbtPayload(tagType);
+    }
+
+    private void skipNbtPayload(final int tagType) {
+        switch (tagType) {
+            case 1 -> skipBytes(1);
+            case 2 -> skipBytes(2);
+            case 3, 5 -> skipBytes(4);
+            case 4, 6 -> skipBytes(8);
+            case 7 -> skipBytes(readInt());
+            case 8 -> skipBytes(readUnsignedShort());
+            case 9 -> {
+                final int childType = readUnsignedByte();
+                final int length = readInt();
+                for (int i = 0; i < length; i++) {
+                    skipNbtPayload(childType);
+                }
+            }
+            case 10 -> {
+                int childType;
+                while ((childType = readUnsignedByte()) != 0) {
+                    skipBytes(readUnsignedShort());
+                    skipNbtPayload(childType);
+                }
+            }
+            case 11 -> skipBytes(Math.multiplyExact(readInt(), 4));
+            case 12 -> skipBytes(Math.multiplyExact(readInt(), 8));
+            default -> throw new IllegalArgumentException("Invalid NBT tag type: " + tagType);
+        }
     }
 
     public final int readVarInt() {

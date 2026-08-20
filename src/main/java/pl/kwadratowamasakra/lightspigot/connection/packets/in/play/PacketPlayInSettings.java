@@ -30,6 +30,12 @@ public class PacketPlayInSettings extends PacketIn {
         if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
             hand = packetBuffer.readVarInt();
         }
+        if (connection.getVersion().isEqualOrHigher(Version.V1_17)) {
+            packetBuffer.readBoolean(); // disable text filtering
+        }
+        if (connection.getVersion().isEqualOrHigher(Version.V1_18)) {
+            packetBuffer.readBoolean(); // allow server listings
+        }
     }
 
     @Override

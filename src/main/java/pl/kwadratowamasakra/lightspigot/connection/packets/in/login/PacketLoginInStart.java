@@ -4,23 +4,18 @@ import io.netty.channel.ChannelFutureListener;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionManager;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionState;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutSetCompression;
 import pl.kwadratowamasakra.lightspigot.connection.packets.out.login.PacketLoginOutSuccess;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutLogin;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutPosition;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketBuffer;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketIn;
 import pl.kwadratowamasakra.lightspigot.connection.user.GameProfile;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
-import pl.kwadratowamasakra.lightspigot.event.Location;
-import pl.kwadratowamasakra.lightspigot.event.PlayerLoginEvent;
 import pl.kwadratowamasakra.lightspigot.event.PlayerPreLoginEvent;
 import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 import pl.kwadratowamasakra.lightspigot.utils.UUIDUtil;
-import pl.kwadratowamasakra.lightspigot.world.World;
 
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class PacketLoginInStart extends PacketIn {
 
@@ -81,22 +76,9 @@ public class PacketLoginInStart extends PacketIn {
         }
 
         connection.sendPacket(new PacketLoginOutSuccess(uuid, username));
-        connection.setConnectionState(ConnectionState.PLAY);
-
-        final World world = server.getWorld();
-        connection.writePacket(new PacketPlayOutLogin(ThreadLocalRandom.current().nextInt(), server.getConfig().getDefaultGamemode(), world.getDimension(), world.getDifficulty(), server.getConnectionManager().getMaxPlayers(), world.getLevelType(), true));
-        world.sendToPlayer(connection);
-        final Location spawnLocation = world.getSpawnLocation();
-
-        final PlayerLoginEvent event = new PlayerLoginEvent(connection, new Location(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch()));
-        server.getEventManager().handleEvent(event);
-        connection.updatePosition(event.getLocation().getX(), event.getLocation().getY(), event.getLocation().getZ());
-        connection.updateRotation(event.getLocation().getYaw(), event.getLocation().getPitch());
-
-        connection.writePacket(new PacketPlayOutPosition(event.getLocation().getX(), event.getLocation().getY(), event.getLocation().getZ(), event.getLocation().getYaw(), event.getLocation().getPitch(), 0));
-
-        connection.sendKeepAlive();
-        server.getConnectionManager().addConnection(connection);
+        if (connection.getVersion().isLessThan(Version.V1_20_2)) {
+            LoginFlow.enterPlay(connection, server);
+        }
     }
 
     @Override

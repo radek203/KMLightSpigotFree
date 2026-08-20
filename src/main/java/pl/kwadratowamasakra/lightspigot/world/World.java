@@ -2,9 +2,8 @@ package pl.kwadratowamasakra.lightspigot.world;
 
 import org.yaml.snakeyaml.Yaml;
 import pl.kwadratowamasakra.lightspigot.LightSpigotServer;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutAbilities;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutChunkData;
-import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.PacketPlayOutSpawnPosition;
+import pl.kwadratowamasakra.lightspigot.connection.Version;
+import pl.kwadratowamasakra.lightspigot.connection.packets.out.play.*;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.event.Location;
 import pl.kwadratowamasakra.lightspigot.world.utils.BlockUtils;
@@ -16,11 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class World {
 
@@ -35,6 +30,7 @@ public class World {
     private final WorldBounds bounds;
     private final File worldFile = new File(WORLD_FILE_NAME);
     private volatile WorldSnapshot snapshot;
+    private volatile List<ChunkSnapshot> modernClientChunks;
     private Map<ChunkCoordinate, int[][][]> chunkBlocks = new HashMap<>();
 
     public World(final LightSpigotServer server) {
@@ -43,11 +39,33 @@ public class World {
                 server.getConfig().getDefaultChunksX(),
                 server.getConfig().getDefaultChunksZ());
         this.snapshot = createVoidSnapshot(0, 0);
+        this.modernClientChunks = createModernClientChunks();
         try {
             reload();
         } catch (final IOException | IllegalArgumentException exception) {
             server.getLogger().error("Failed to load world.json.", exception.getMessage());
         }
+    }
+
+    private static void appendBlocks(final List<String> output, final ChunkCoordinate coordinate, final int[][][] blocks) {
+        for (int y = 0; y < WORLD_HEIGHT; y++) {
+            for (int localZ = 0; localZ < CHUNK_SIZE; localZ++) {
+                for (int localX = 0; localX < CHUNK_SIZE; localX++) {
+                    final int blockValue = blocks[y][localZ][localX];
+                    if (blockValue == 0) {
+                        continue;
+                    }
+                    final int x = coordinate.chunkX() * CHUNK_SIZE + localX;
+                    final int z = coordinate.chunkZ() * CHUNK_SIZE + localZ;
+                    output.add("    {\"x\": " + x + ", \"y\": " + y + ", \"absoluteY\": true, \"z\": " + z
+                            + ", \"block\": " + (blockValue >>> 4) + ", \"data\": " + (blockValue & 0x0F) + "}");
+                }
+            }
+        }
+    }
+
+    private static String escapeJson(final String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     public final void reloadAndSendUpdates() throws IOException {
@@ -62,15 +80,24 @@ public class World {
     }
 
     public final void sendToPlayer(final PlayerConnection connection) {
-        List<ChunkSnapshot> chunks = getChunks();
+        List<ChunkSnapshot> chunks = getChunksForClient(connection.getVersion());
         connection.sendPacket(new PacketPlayOutSpawnPosition(getSpawnBlockX(), getSpawnBlockY(), getSpawnBlockZ()));
         connection.sendPacket(new PacketPlayOutAbilities(
                 PacketPlayOutAbilities.FLYING | PacketPlayOutAbilities.ALLOW_FLYING,
                 PacketPlayOutAbilities.DEFAULT_FLYING_SPEED,
                 PacketPlayOutAbilities.DEFAULT_FIELD_OF_VIEW));
+        final boolean batchedChunks = connection.getVersion().isEqualOrHigher(Version.V1_20_2);
+        if (batchedChunks) connection.writePacket(new PacketPlayOutChunkBatchStart());
         for (final ChunkSnapshot chunk : chunks) {
-            connection.sendPacket(new PacketPlayOutChunkData(chunk.chunkX(), chunk.chunkZ(), true, chunk.primaryBitMask(), chunk.chunkData()));
+            final PacketPlayOutChunkData chunkPacket = new PacketPlayOutChunkData(
+                    chunk.chunkX(), chunk.chunkZ(), true, chunk.primaryBitMask(), chunk.chunkData(), this);
+            if (batchedChunks) connection.writePacket(chunkPacket);
+            else connection.sendPacket(chunkPacket);
+            if (connection.getVersion().isInRange(Version.V1_14, Version.V1_17_1)) {
+                connection.sendPacket(new PacketPlayOutUpdateLight(chunk.chunkX(), chunk.chunkZ(), chunk.primaryBitMask(), chunk.chunkData()));
+            }
         }
+        if (batchedChunks) connection.sendPacket(new PacketPlayOutChunkBatchFinish(chunks.size()));
     }
 
     public synchronized void reload() throws IOException {
@@ -89,6 +116,7 @@ public class World {
                 chunkBlocks = loadedWorld.chunkBlocks();
                 snapshot = loadedWorld.snapshot();
             }
+            modernClientChunks = createModernClientChunks();
         }
     }
 
@@ -126,6 +154,7 @@ public class World {
         blocks[y][Math.floorMod(z, CHUNK_SIZE)][Math.floorMod(x, CHUNK_SIZE)] =
                 BlockUtils.createLegacyBlockValue(blockId, blockData);
         snapshot = copySnapshotWithUpdatedChunk(ChunkUtils.createChunkSnapshot(coordinate, blocks, FULL_CHUNK_MASK));
+        modernClientChunks = createModernClientChunks();
         return true;
     }
 
@@ -192,6 +221,50 @@ public class World {
 
     public List<ChunkSnapshot> getChunks() {
         return snapshot.copyChunks();
+    }
+
+    /**
+     * Modern clients only compile a chunk section when the neighbouring chunks
+     * needed by the renderer are loaded. Advertise the actual world radius and
+     * fill its square with empty chunks instead of claiming the old hard-coded
+     * distance of ten while sending only the configured world rectangle.
+     */
+    public int getViewDistance() {
+        final int spawnChunkX = Math.floorDiv(getSpawnBlockX(), CHUNK_SIZE);
+        final int spawnChunkZ = Math.floorDiv(getSpawnBlockZ(), CHUNK_SIZE);
+        final int lastChunkX = bounds.firstChunkX() + bounds.chunksX() - 1;
+        final int lastChunkZ = bounds.firstChunkZ() + bounds.chunksZ() - 1;
+        return Math.max(2, Math.max(
+                Math.max(Math.abs(bounds.firstChunkX() - spawnChunkX), Math.abs(lastChunkX - spawnChunkX)),
+                Math.max(Math.abs(bounds.firstChunkZ() - spawnChunkZ), Math.abs(lastChunkZ - spawnChunkZ))));
+    }
+
+    private List<ChunkSnapshot> getChunksForClient(final Version version) {
+        if (version.isLessThan(Version.V1_21)) {
+            return snapshot.chunks();
+        }
+        return modernClientChunks;
+    }
+
+    private List<ChunkSnapshot> createModernClientChunks() {
+        final Map<ChunkCoordinate, ChunkSnapshot> chunks = new HashMap<>();
+        for (final ChunkSnapshot chunk : snapshot.chunks()) {
+            chunks.put(new ChunkCoordinate(chunk.chunkX(), chunk.chunkZ()), chunk);
+        }
+
+        final int spawnChunkX = Math.floorDiv(getSpawnBlockX(), CHUNK_SIZE);
+        final int spawnChunkZ = Math.floorDiv(getSpawnBlockZ(), CHUNK_SIZE);
+        final int viewDistance = getViewDistance();
+        for (int chunkX = spawnChunkX - viewDistance; chunkX <= spawnChunkX + viewDistance; chunkX++) {
+            for (int chunkZ = spawnChunkZ - viewDistance; chunkZ <= spawnChunkZ + viewDistance; chunkZ++) {
+                final ChunkCoordinate coordinate = new ChunkCoordinate(chunkX, chunkZ);
+                chunks.computeIfAbsent(coordinate, ignored -> ChunkUtils.createChunkSnapshot(
+                        coordinate, ChunkUtils.createEmptyChunkBlocks(), 0));
+            }
+        }
+        return chunks.values().stream()
+                .sorted(Comparator.comparingInt(ChunkSnapshot::chunkX).thenComparingInt(ChunkSnapshot::chunkZ))
+                .toList();
     }
 
     public boolean isInsideWorldBounds(final int blockX, final int blockZ) {
@@ -322,27 +395,6 @@ public class World {
             json.append('\n').append(String.join(",\n", blocks)).append('\n').append("  ");
         }
         return json.append("]\n}\n").toString();
-    }
-
-    private static void appendBlocks(final List<String> output, final ChunkCoordinate coordinate, final int[][][] blocks) {
-        for (int y = 0; y < WORLD_HEIGHT; y++) {
-            for (int localZ = 0; localZ < CHUNK_SIZE; localZ++) {
-                for (int localX = 0; localX < CHUNK_SIZE; localX++) {
-                    final int blockValue = blocks[y][localZ][localX];
-                    if (blockValue == 0) {
-                        continue;
-                    }
-                    final int x = coordinate.chunkX() * CHUNK_SIZE + localX;
-                    final int z = coordinate.chunkZ() * CHUNK_SIZE + localZ;
-                    output.add("    {\"x\": " + x + ", \"y\": " + y + ", \"absoluteY\": true, \"z\": " + z
-                            + ", \"block\": " + (blockValue >>> 4) + ", \"data\": " + (blockValue & 0x0F) + "}");
-                }
-            }
-        }
-    }
-
-    private static String escapeJson(final String value) {
-        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     private record LoadedWorld(WorldSnapshot snapshot, Map<ChunkCoordinate, int[][][]> chunkBlocks) {

@@ -20,6 +20,19 @@ public class PacketPlayOutPosition extends PacketOut {
 
     @Override
     public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+        if (connection.getVersion().isEqualOrHigher(Version.V1_21_2)) {
+            packetBuffer.writeVarInt(teleportId);
+            packetBuffer.writeDouble(x);
+            packetBuffer.writeDouble(y);
+            packetBuffer.writeDouble(z);
+            packetBuffer.writeDouble(0.0D);
+            packetBuffer.writeDouble(0.0D);
+            packetBuffer.writeDouble(0.0D);
+            packetBuffer.writeFloat(yaw);
+            packetBuffer.writeFloat(pitch);
+            packetBuffer.writeInt(0); // relative position/rotation flags
+            return;
+        }
         packetBuffer.writeDouble(x);
         packetBuffer.writeDouble(y);
         packetBuffer.writeDouble(z);
@@ -29,6 +42,9 @@ public class PacketPlayOutPosition extends PacketOut {
 
         if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
             packetBuffer.writeVarInt(teleportId);
+        }
+        if (connection.getVersion().isInRange(Version.V1_17, Version.V1_19_3)) {
+            packetBuffer.writeBoolean(false); // do not dismount
         }
     }
 

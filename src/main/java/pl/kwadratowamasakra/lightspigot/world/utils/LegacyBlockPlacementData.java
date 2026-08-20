@@ -4,9 +4,6 @@ import java.util.Set;
 
 public final class LegacyBlockPlacementData {
 
-    private static final Set<Integer> STAIRS = Set.of(
-            53, 67, 108, 109, 114, 128, 134, 135, 136, 156, 163, 164, 180
-    );
     private static final Set<Integer> SLABS = Set.of(44, 126, 182);
     private static final Set<Integer> LOGS = Set.of(17, 162);
 
@@ -15,7 +12,7 @@ public final class LegacyBlockPlacementData {
 
     public static int resolve(final int blockId, final int itemData, final int clickedFace,
                               final float hitY, final float playerYaw) {
-        if (STAIRS.contains(blockId)) {
+        if (LegacyStairShape.isStairs(blockId << 4)) {
             final int direction = stairsDirection(playerYaw);
             final boolean upsideDown = clickedFace == 0 || clickedFace != 1 && hitY > 0.5F;
             return direction | (upsideDown ? 0x04 : 0);
