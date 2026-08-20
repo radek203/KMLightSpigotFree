@@ -1,5 +1,7 @@
 package pl.kwadratowamasakra.lightspigot.world;
 
+import pl.kwadratowamasakra.lightspigot.connection.Version;
+
 public record BlockPosition(int x, int y, int z) {
 
     public static BlockPosition fromLong(final long packedPosition) {
@@ -9,10 +11,29 @@ public record BlockPosition(int x, int y, int z) {
         return new BlockPosition(x, y, z);
     }
 
+    public static BlockPosition fromLong(final long packedPosition, final Version version) {
+        if (version.isLessThan(Version.V1_14)) {
+            return fromLong(packedPosition);
+        }
+        final int x = (int) (packedPosition >> 38);
+        final int z = (int) (packedPosition << 26 >> 38);
+        final int y = (int) (packedPosition << 52 >> 52);
+        return new BlockPosition(x, y, z);
+    }
+
     public long toLong() {
         return ((long) x & 0x3FFFFFFL) << 38
                 | ((long) y & 0xFFFL) << 26
                 | (long) z & 0x3FFFFFFL;
+    }
+
+    public long toLong(final Version version) {
+        if (version.isLessThan(Version.V1_14)) {
+            return toLong();
+        }
+        return ((long) x & 0x3FFFFFFL) << 38
+                | ((long) z & 0x3FFFFFFL) << 12
+                | (long) y & 0xFFFL;
     }
 
     public BlockPosition relative(final int face) {

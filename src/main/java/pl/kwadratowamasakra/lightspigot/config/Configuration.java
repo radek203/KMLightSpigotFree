@@ -264,7 +264,7 @@ public class Configuration {
 
     public final boolean getBoolean(final String path) {
         final Object def = getDefault(path);
-        return getBoolean(path, (def instanceof Boolean) ? (Boolean) def : false);
+        return getBoolean(path, def instanceof Boolean && (Boolean) def);
     }
 
     public final boolean getBoolean(final String path, final boolean def) {

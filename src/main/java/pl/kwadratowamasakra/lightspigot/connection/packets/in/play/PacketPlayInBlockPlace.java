@@ -30,13 +30,21 @@ public class PacketPlayInBlockPlace extends PacketIn {
             facingX = packetBuffer.readUnsignedByte() / 16.0F;
             facingY = packetBuffer.readUnsignedByte() / 16.0F;
             facingZ = packetBuffer.readUnsignedByte() / 16.0F;
-        } else if (connection.getVersion().isEqualOrHigher(Version.V1_11)) {
+        } else if (connection.getVersion().isInRange(Version.V1_11, Version.V1_13_2)) {
             position = packetBuffer.readLong();
             placedBlockDirection = packetBuffer.readVarInt();
             hand = packetBuffer.readVarInt();
             facingX = packetBuffer.readFloat();
             facingY = packetBuffer.readFloat();
             facingZ = packetBuffer.readFloat();
+        } else if (connection.getVersion().isEqualOrHigher(Version.V1_14)) {
+            hand = packetBuffer.readVarInt();
+            position = packetBuffer.readLong();
+            placedBlockDirection = packetBuffer.readVarInt();
+            facingX = packetBuffer.readFloat();
+            facingY = packetBuffer.readFloat();
+            facingZ = packetBuffer.readFloat();
+            packetBuffer.readBoolean(); // cursor is inside a block
         } else {
             position = packetBuffer.readLong();
             placedBlockDirection = packetBuffer.readUnsignedByte();
@@ -65,7 +73,7 @@ public class PacketPlayInBlockPlace extends PacketIn {
             return;
         }
 
-        final BlockPosition placedPosition = BlockPosition.fromLong(position).relative(placedBlockDirection);
+        final BlockPosition placedPosition = BlockPosition.fromLong(position, connection.getVersion()).relative(placedBlockDirection);
         final ItemStack placedItem = connection.getVersion().isEqual(Version.V1_8) ? stack : connection.getHeldItem(hand);
         if (!connection.isOp() || placedItem == null || !placedItem.isItem()) {
             BlockUpdateSender.sendBlock(connection, server.getWorld(), placedPosition);

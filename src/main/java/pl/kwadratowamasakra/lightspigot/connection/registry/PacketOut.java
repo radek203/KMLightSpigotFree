@@ -1,5 +1,6 @@
 package pl.kwadratowamasakra.lightspigot.connection.registry;
 
+import pl.kwadratowamasakra.lightspigot.connection.Version;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 
 /**
@@ -7,6 +8,10 @@ import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
  * It is an abstract class that defines the methods that all outgoing packets should implement.
  */
 public abstract class PacketOut implements Packet {
+
+    public int packetIdOverride(final Version version) {
+        return -1;
+    }
 
     /**
      * Writes the data to the packet buffer.

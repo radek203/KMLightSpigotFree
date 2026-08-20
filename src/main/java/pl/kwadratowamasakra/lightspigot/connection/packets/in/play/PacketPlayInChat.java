@@ -10,10 +10,10 @@ import pl.kwadratowamasakra.lightspigot.utils.ChatUtil;
 
 public class PacketPlayInChat extends PacketIn {
 
-    private String message;
+    protected String message;
 
     @Override
-    public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+    public void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         message = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 100));
     }
 

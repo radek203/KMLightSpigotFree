@@ -19,16 +19,37 @@ public class PacketPlayInWindowClick extends PacketIn {
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+        if (connection.getVersion().isEqualOrHigher(Version.V1_20_5)) {
+            packetBuffer.skipBytes(packetBuffer.readableBytes());
+            return;
+        }
         windowId = packetBuffer.readByte();
+        if (connection.getVersion().isEqualOrHigher(Version.V1_17_1)) {
+            packetBuffer.readVarInt(); // state id
+        }
         slotId = packetBuffer.readShort();
         usedButton = packetBuffer.readByte();
+        if (connection.getVersion().isEqualOrHigher(Version.V1_17)) {
+            shift = connection.getVersion().isEqualOrHigher(Version.V1_17_1)
+                    ? packetBuffer.readVarInt() : packetBuffer.readByte();
+            final int changedSlots = packetBuffer.readVarInt();
+            if (changedSlots < 0 || changedSlots > 128) {
+                throw new IllegalArgumentException("Invalid changed slot count: " + changedSlots);
+            }
+            for (int i = 0; i < changedSlots; i++) {
+                packetBuffer.readShort();
+                packetBuffer.readItemStack(connection);
+            }
+            item = packetBuffer.readItemStack(connection);
+            return;
+        }
         actionNumber = packetBuffer.readShort();
         if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
             shift = packetBuffer.readVarInt();
         } else {
             shift = packetBuffer.readByte();
         }
-        item = packetBuffer.readItemStack();
+        item = packetBuffer.readItemStack(connection);
     }
 
     @Override

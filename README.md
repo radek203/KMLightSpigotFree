@@ -9,7 +9,26 @@ This server is built to handle thousands of players (For safety capped at 15360,
 
 It's crafted as a lightweight server, designed for handling tasks like logging in, verifying accounts, and more, without the overhead of managing worlds, etc.
 
-Specifically designed for players playing Minecraft version 1.8-1.12.2, it also lets you make custom plugins with custom commands and listeners.
+Specifically designed for players playing Minecraft version 1.8-26.2 (protocols 47-776), it also lets you make custom plugins with custom commands and listeners.
+
+Block/item mappings, dimension data and configuration registries are generated from
+[PrismarineJS minecraft-data](https://github.com/PrismarineJS/minecraft-data). The 26.2 data set is supplied by
+[Complexity-ML/minecraft-data-26.2](https://github.com/Complexity-ML/minecraft-data-26.2) until it is available upstream.
+Vanilla tags can be generated from the matching official server JARs and their registry reports. For an exact
+rebuild, pass a directory containing captured vanilla `configuration-<protocol>.bin` and `tags-<protocol>.bin`
+packet bodies; this avoids relying on delayed or incomplete `minecraft-data` registry updates. Put the JARs in one
+directory using names such as `1.20.5.jar`, `1.21.11.jar` and `26.2.jar`, then run:
+
+```bash
+node tools/generate-protocol-resources.mjs \
+  /path/to/minecraft-data/data \
+  /path/to/minecraft-data-26.2/data \
+  /path/to/vanilla-server-jars \
+  /path/to/captured-protocol-payloads
+```
+
+The generator replaces resources only after every required version succeeds. Packet IDs for the subset of packets
+implemented by this server remain explicitly registered in `PacketManager`.
 
 ## How to run (Linux)
 

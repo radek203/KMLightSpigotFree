@@ -1,33 +1,6 @@
 package pl.kwadratowamasakra.lightspigot.utils.maps;
 
-public class MapIcon {
-    private final byte type;
-    private final byte x;
-    private final byte y;
-    private final byte rotation;
-
-    public MapIcon(final byte type, final byte x, final byte y, final byte rotation) {
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.rotation = rotation;
-    }
-
-    public final byte getType() {
-        return type;
-    }
-
-    public final byte getX() {
-        return x;
-    }
-
-    public final byte getY() {
-        return y;
-    }
-
-    public final byte getRotation() {
-        return rotation;
-    }
+public record MapIcon(byte type, byte x, byte y, byte rotation) {
 
     public final boolean equals(final Object obj) {
         if (this == obj) {
@@ -47,11 +20,4 @@ public class MapIcon {
         }
     }
 
-    public final int hashCode() {
-        int hash = type;
-        hash = 31 * hash + x;
-        hash = 31 * hash + y;
-        hash = 31 * hash + rotation;
-        return hash;
-    }
 }

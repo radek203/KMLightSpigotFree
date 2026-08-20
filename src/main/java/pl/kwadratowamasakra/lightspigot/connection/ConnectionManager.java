@@ -154,9 +154,9 @@ public class ConnectionManager {
      *
      * @param name The name of the player to check.
      * @return TryAddResult indicating the result of the operation:
-     *  - ALREADY_CONNECTED if the player is already connected,
-     *  - MAX_PLAYERS_REACHED if the maximum number of players has been reached,
-     *  - SUCCESS if the player was successfully added to the connecting list.
+     * - ALREADY_CONNECTED if the player is already connected,
+     * - MAX_PLAYERS_REACHED if the maximum number of players has been reached,
+     * - SUCCESS if the player was successfully added to the connecting list.
      */
     public final TryAddResult tryAddConnecting(final String name) {
         return connections.tryAddConnecting(name, Math.min(MAX_PLAYERS, server.getConfig().getMaxPlayers() == -1 ? MAX_PLAYERS : server.getConfig().getMaxPlayers()));

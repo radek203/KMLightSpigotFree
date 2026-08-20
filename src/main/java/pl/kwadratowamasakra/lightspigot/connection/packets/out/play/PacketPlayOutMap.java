@@ -46,15 +46,29 @@ public class PacketPlayOutMap extends PacketOut {
     public final void write(final PlayerConnection connection, final PacketBuffer packetBuffer) {
         packetBuffer.writeVarInt(mapId);
         packetBuffer.writeByte(scale);
-        if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
+        if (connection.getVersion().isInRange(Version.V1_9, Version.V1_16_4)) {
             packetBuffer.writeBoolean(track);
+        }
+        if (connection.getVersion().isEqualOrHigher(Version.V1_14)) {
+            packetBuffer.writeBoolean(false); // locked
+        }
+        if (connection.getVersion().isEqualOrHigher(Version.V1_17)) {
+            packetBuffer.writeBoolean(true); // icons are present
         }
         packetBuffer.writeVarInt(icons.length);
 
         for (final MapIcon icon : icons) {
-            packetBuffer.writeByte((icon.getType() & 15) << 4 | icon.getRotation() & 15);
-            packetBuffer.writeByte(icon.getX());
-            packetBuffer.writeByte(icon.getY());
+            if (connection.getVersion().isEqualOrHigher(Version.V1_13)) {
+                packetBuffer.writeVarInt(icon.type());
+            } else {
+                packetBuffer.writeByte((icon.type() & 15) << 4 | icon.rotation() & 15);
+            }
+            packetBuffer.writeByte(icon.x());
+            packetBuffer.writeByte(icon.y());
+            if (connection.getVersion().isEqualOrHigher(Version.V1_13)) {
+                packetBuffer.writeByte(icon.rotation());
+                packetBuffer.writeBoolean(false); // no custom display name
+            }
         }
 
         packetBuffer.writeByte(maxX);

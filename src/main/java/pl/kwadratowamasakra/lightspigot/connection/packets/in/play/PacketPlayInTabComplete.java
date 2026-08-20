@@ -15,6 +15,11 @@ public class PacketPlayInTabComplete extends PacketIn {
 
     @Override
     public final void read(final PlayerConnection connection, final PacketBuffer packetBuffer) {
+        if (connection.getVersion().isEqualOrHigher(Version.V1_13)) {
+            packetBuffer.readVarInt(); // transaction id
+            message = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 32767));
+            return;
+        }
         message = packetBuffer.readString(Math.min(packetBuffer.readVarInt(), 32767));
         if (connection.getVersion().isEqualOrHigher(Version.V1_9)) {
             forceCommand = packetBuffer.readBoolean();

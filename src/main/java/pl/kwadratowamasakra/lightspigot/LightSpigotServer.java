@@ -12,6 +12,7 @@ import pl.kwadratowamasakra.lightspigot.config.ServerConfigEntity;
 import pl.kwadratowamasakra.lightspigot.connection.ClientChannelInitializer;
 import pl.kwadratowamasakra.lightspigot.connection.ConnectionManager;
 import pl.kwadratowamasakra.lightspigot.connection.registry.PacketManager;
+import pl.kwadratowamasakra.lightspigot.connection.registry.ProtocolResources;
 import pl.kwadratowamasakra.lightspigot.connection.user.PlayerConnection;
 import pl.kwadratowamasakra.lightspigot.event.EventManager;
 import pl.kwadratowamasakra.lightspigot.plugin.PluginManager;
@@ -61,6 +62,11 @@ public class LightSpigotServer {
         config = new ServerConfigEntity(this);
         TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of(config.getTimeZone())));
         logger = new ServerLogger(config.isDebugOn());
+
+        final long protocolLoadStarted = System.nanoTime();
+        ProtocolResources.preload();
+        logger.debug("Protocol resources loaded in "
+                + (System.nanoTime() - protocolLoadStarted) / 1_000_000L + " ms.");
 
         packetManager.registerPackets(this);
         world = new World(this);

@@ -39,8 +39,8 @@ public class ServerConfigEntity implements FileProviderEntity {
     private final String commandNotExists;
     private final String commandNoPermission;
     private final String restart;
-    private int defaultChunksX;
-    private int defaultChunksZ;
+    private final int defaultChunksX;
+    private final int defaultChunksZ;
 
     /**
      * Constructor for the ServerConfig class.

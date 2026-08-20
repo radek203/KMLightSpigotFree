@@ -25,8 +25,8 @@ network:
     time: 250
   version: # https://minecraft.fandom.com/wiki/Protocol_version
     min: 47
-    max: 340
-    message: "&cYou are using an unsupported version of Minecraft! Supported versions: 1.8-1.12.2"
+    max: 776
+    message: "&cYou are using an unsupported version of Minecraft! Supported versions: 1.8-26.2"
   playerOnServer: "&cA player with your nickname is already on the server!"
   restart: "&cServer restart! Please join again in a moment!"
   defaultGamemode: 3
